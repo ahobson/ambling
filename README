@@ -7,6 +7,8 @@
 # To install, do the usual rails incancation:
 #    ruby script/plugin install svn://rubyforge.org//var/svn/ambling/trunk
 #
+# Ambling is also now on github: http://github.com/ahobson/ambling/tree/master
+#
 # Examples:
 # 
 # In your controller, generate the data xml for a pie chart
@@ -22,7 +24,7 @@
 # In your view, embed the flash and customize the settings
 #
 #   <%=
-#   ambling_chart(:pie,  :data_file => url_for(:action => 'pie_data'),
+#   ambling_chart(:pie,  :data_file => url_for(:action => 'pie_data', :escape => false),
 #                           :id => 'pie_data', :width => 290, :height => 200,
 #                           :chart_settings => Ambling::Pie::Settings.new({
 #                             :pie => {
@@ -81,7 +83,7 @@
 # In your view:
 #
 #   <%=
-#   ambling_chart(:column,  :data_file => url_for(:action => 'graph_data'),
+#   ambling_chart(:column,  :data_file => url_for(:action => 'graph_data', :escape => false),
 #                           :id => "graph_data", :width => 900, :height => 250,
 #                           :chart_settings => Ambling::Column::Settings.new({
 #                             :column => {
@@ -136,7 +138,7 @@
 # In your view:
 #
 #   <%=
-#   ambling_chart(:column,  :data_file => url_for(:action => 'column_data'),
+#   ambling_chart(:column,  :data_file => url_for(:action => 'column_data', :escape => false),
 #                           :id => 'column_data', :width => 290, :height => 200,
 #                           :chart_settings => Ambling::Column::Settings.new({
 #                             :column => {
