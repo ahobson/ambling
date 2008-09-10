@@ -7,6 +7,17 @@
 # To install, do the usual rails incancation:
 #    ruby script/plugin install svn://rubyforge.org//var/svn/ambling/trunk
 #
+# Ambling expects amcharts to be installed under public/amcharts.  Put the
+# licence key (if any), swf files, fonts and plugins directories under here
+#
+#
+# Amcharts uses swfobject.js, so put that in public/javascripts and include it
+# in your layout.
+# 
+# Ambling uses expressinstall.swf by default, so put that in public/amcharts.
+#
+#
+#
 # Ambling is also now on github: http://github.com/ahobson/ambling/tree/master
 #
 # Examples:
