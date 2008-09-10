@@ -3,5 +3,5 @@ task :doc do
 end
 
 task :rubyforge => [:doc] do
-  sh "rsync -Car * doc/* rubyforge.org:/var/www/gforge-projects/ambling"
+  sh "rsync -Car doc/* rubyforge.org:/var/www/gforge-projects/ambling"
 end
