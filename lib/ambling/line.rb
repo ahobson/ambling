@@ -4,21 +4,16 @@ module Ambling
   class Line
     
     #
-    # value or explanation between () brackets shows the range or type of values you should use for this parameter 
+    # "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom 
     #
     class Settings      
       include Base
       
-      VALUES = [:data_type,:type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:connect,:hide_bullets_count,:link_target,:start_on_axis,:background,:plot_area,:scroller,:grid,:values,:axes,:indicator,:legend,:zoom_out_button,:help,:export_as_image,:error_messages,:strings,:labels,:graphs]
+      VALUES = [:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:connect,:hide_bullets_count,:link_target,:start_on_axis,:colors,:rescale_on_hide,:background,:plot_area,:scroller,:grid,:values,:axes,:indicator,:balloon,:legend,:vertical_lines,:zoom_out_button,:help,:export_as_image,:error_messages,:strings,:context_menu,:labels,:graphs,:guides]
       #
       #  [xml] (xml / csv) 
       #
       attr_accessor :data_type
-      
-      #
-      #  [line] (line, stacked, 100% stacked) 
-      #
-      attr_accessor :type
       
       #
       #  [;] (string) csv file data separator (you need it only if you are using csv file for your data) 
@@ -51,7 +46,7 @@ module Ambling
       attr_accessor :decimals_separator
       
       #
-      #  [ ] (string) thousand separator 
+      #  [ ] (string) thousand separator. use "none" if you don't want to separate 
       #
       attr_accessor :thousands_separator
       
@@ -61,7 +56,7 @@ module Ambling
       attr_accessor :digits_after_decimal
       
       #
-      #  Legend, buttons labels will not be repositioned if you set your x and y values for these objects 
+      #  [false] (true / false) if your chart's width or height is set in percents, and redraw is set to true, the chart will be redrawn then screen size changes  Legend, buttons labels will not be repositioned if you set your x and y values for these objects 
       #
       attr_accessor :redraw
       
@@ -106,6 +101,16 @@ module Ambling
       attr_accessor :start_on_axis
       
       #
+      #  [#FF0000,#0000FF,#00FF00,#FF9900,#CC00CC,#00CCCC,#33FF00,#990000,#000066,#555555] Colors of graphs. if the graph color is not set, color from this array will be used 
+      #
+      attr_accessor :colors
+      
+      #
+      #  [true] (true/false) When you show or hide graphs, the chart recalculates min and max values (rescales the chart). If you don't want this, set this to false. 
+      #
+      attr_accessor :rescale_on_hide
+      
+      #
       #  BACKGROUND 
       #
       attr_accessor :background
@@ -141,9 +146,19 @@ module Ambling
       attr_accessor :indicator
       
       #
+      #  BALLOON 
+      #
+      attr_accessor :balloon
+      
+      #
       #  LEGEND 
       #
       attr_accessor :legend
+      
+      #
+      #  line chart can also display vertical lines/columns (set <vertical_lines>true</vertical_lines> in graph settings for that). If you also set <line_alpha>0</line_alpha> your line chart will become column chart 
+      #
+      attr_accessor :vertical_lines
       
       #
       # 
@@ -171,6 +186,11 @@ module Ambling
       attr_accessor :strings
       
       #
+      #  <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      attr_accessor :context_menu
+      
+      #
       #  labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       attr_accessor :labels
@@ -179,6 +199,11 @@ module Ambling
       #  if graph settings are defined both here and in data file, the ones from data file are used 
       #
       attr_accessor :graphs
+      
+      #
+      #  guides are straight lines drawn through all plot area at a give value. Can also be filled with color 
+      #
+      attr_accessor :guides
       
       
       #
@@ -189,7 +214,7 @@ module Ambling
         
         VALUES = [:color,:alpha,:border_color,:border_alpha,:file]
         #
-        #  [#FFFFFF] (hex color code) 
+        #  [#FFFFFF] (hex color code) Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -209,7 +234,7 @@ module Ambling
         attr_accessor :border_alpha
         
         #
-        #  The chart will look for this file in amline_path folder (amline_path is set in HTML) 
+        #  [] (filename) swf or jpg file of a background. Do not use progressive jpg file, it will be not visible with flash player 7  The chart will look for this file in "path" folder ("path" is set in HTML) 
         #
         attr_accessor :file
       end
@@ -221,7 +246,7 @@ module Ambling
         
         VALUES = [:color,:alpha,:border_color,:border_alpha,:margins]
         #
-        #  [#FFFFFF](hex color code) 
+        #  [#FFFFFF](hex color code) Separate color codes with comas for gradient
         #
         attr_accessor :color
         
@@ -292,7 +317,7 @@ module Ambling
         attr_accessor :y
         
         #
-        #  [#DADADA] (hex color code) scrollbar color 
+        #  [#DADADA] (hex color code) scrollbar color. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -302,7 +327,7 @@ module Ambling
         attr_accessor :alpha
         
         #
-        #  [#F0F0F0] (hex color code) scroller background color 
+        #  [#F0F0F0] (hex color code) scroller background color. Separate color codes with comas for gradient 
         #
         attr_accessor :bg_color
         
@@ -382,7 +407,7 @@ module Ambling
         class YLeft  
           include Base
           
-          VALUES = [:enabled,:color,:alpha,:dashed,:dash_length,:approx_count]
+          VALUES = [:enabled,:color,:alpha,:dashed,:dash_length,:approx_count,:fill_color,:fill_alpha]
           #
           #  [true] (true / false) 
           #
@@ -412,6 +437,16 @@ module Ambling
           #  [10] (Number) approximate number of gridlines 
           #
           attr_accessor :approx_count
+          
+          #
+          #  [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) 
+          #
+          attr_accessor :fill_color
+          
+          #
+          #  [0] (0 - 100) opacity of fill 
+          #
+          attr_accessor :fill_alpha
         end
         #
         # horizontal grid, Y right axis. Visible only if there is at least one graph assigned to right axis 
@@ -419,7 +454,7 @@ module Ambling
         class YRight  
           include Base
           
-          VALUES = [:enabled,:color,:alpha,:dashed,:dash_length,:approx_count]
+          VALUES = [:enabled,:color,:alpha,:dashed,:dash_length,:approx_count,:fill_color,:fill_alpha]
           #
           #  [true] (true / false) 
           #
@@ -449,6 +484,16 @@ module Ambling
           #  [10] (Number) approximate number of gridlines 
           #
           attr_accessor :approx_count
+          
+          #
+          #  [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) 
+          #
+          attr_accessor :fill_color
+          
+          #
+          #  [0] (0 - 100) opacity of fill 
+          #
+          attr_accessor :fill_alpha
         end
       end
       #
@@ -742,7 +787,12 @@ module Ambling
         class YLeft  
           include Base
           
-          VALUES = [:color,:alpha,:width,:tick_length,:logarithmic]
+          VALUES = [:type,:color,:alpha,:width,:tick_length,:logarithmic]
+          #
+          #  [line] (line, stacked, 100% stacked) 
+          #
+          attr_accessor :type
+          
           #
           #  [#000000] (hex color code) 
           #
@@ -774,7 +824,12 @@ module Ambling
         class YRight  
           include Base
           
-          VALUES = [:color,:alpha,:width,:tick_length,:logarithmic]
+          VALUES = [:type,:color,:alpha,:width,:tick_length,:logarithmic]
+          #
+          #  [line] (line, stacked, 100% stacked) 
+          #
+          attr_accessor :type
+          
           #
           #  [#000000] (hex color code) 
           #
@@ -807,7 +862,7 @@ module Ambling
       class Indicator  
         include Base
         
-        VALUES = [:enabled,:zoomable,:color,:line_alpha,:selection_color,:selection_alpha,:x_balloon_enabled,:x_balloon_text_color,:y_balloon_text_size,:y_balloon_on_off,:one_y_balloon]
+        VALUES = [:enabled,:zoomable,:color,:line_alpha,:selection_color,:selection_alpha,:x_balloon_enabled,:x_balloon_text_color]
         #
         #  [true] (true / false) 
         #
@@ -847,21 +902,73 @@ module Ambling
         #  [text_color] (hex color code) 
         #
         attr_accessor :x_balloon_text_color
+      end
+      #
+      # BALLOON 
+      #
+      class Balloon  
+        include Base
+        
+        VALUES = [:enabled,:only_one,:on_off,:color,:alpha,:text_color,:text_size,:max_width,:corner_radius,:border_width,:border_alpha,:border_color]
+        #
+        #  [true] (true / false) 
+        #
+        attr_accessor :enabled
+        
+        #
+        #  [false] (true / false) if set to true, only one balloon at a time will be displayed 
+        #
+        attr_accessor :only_one
+        
+        #
+        #  [true] (true/false) whether it will be possible to turn on or off y balloons by clicking on a legend or on a graph 
+        #
+        attr_accessor :on_off
+        
+        #
+        #  [] (hex color code) balloon background color. If not set, graph.balloon_color will be used.  
+        #
+        attr_accessor :color
+        
+        #
+        #  [] (0 - 100) balloon background opacity. If not set, graph.balloon_alpha will be used. 
+        #
+        attr_accessor :alpha
+        
+        #
+        #  [] (hex color code) baloon text color. If not set, graph.balloon_text_color will be used 
+        #
+        attr_accessor :text_color
         
         #
         #  [text_size] (Number) 
         #
-        attr_accessor :y_balloon_text_size
+        attr_accessor :text_size
         
         #
-        #  [true] (true / false) whether it is possible to turn on/off y balloon by clicking on graphs or legend. Works only if indicator is enabled 
+        #  [] (Number) The maximum width of a balloon. If not set, half width of plot area will be used 
         #
-        attr_accessor :y_balloon_on_off
+        attr_accessor :max_width
         
         #
-        #  [false] (true / false) if you set it to true, only one y balloon will be visible at a time 
+        #  [0] (Number) Corner radius of a balloon. If you set it > 0, the balloon will not display arrow 
         #
-        attr_accessor :one_y_balloon
+        attr_accessor :corner_radius
+        
+        #
+        #  [0] (Number) 
+        #
+        attr_accessor :border_width
+        
+        #
+        #  [balloon.alpha] (Number) 
+        #
+        attr_accessor :border_alpha
+        
+        #
+        #  [balloon.color] (hex color code) 
+        #
+        attr_accessor :border_color
       end
       #
       # LEGEND 
@@ -869,24 +976,24 @@ module Ambling
       class Legend  
         include Base
         
-        VALUES = [:enabled,:x,:y,:width,:max_columns,:color,:alpha,:border_color,:border_alpha,:text_color,:text_color_hover,:text_size,:spacing,:margins,:graph_on_off,:reverse_order,:key,:values]
+        VALUES = [:enabled,:x,:y,:width,:max_columns,:color,:alpha,:border_color,:border_alpha,:text_color,:text_color_hover,:text_size,:spacing,:margins,:graph_on_off,:reverse_order,:align,:key,:values]
         #
         #  [true] (true / false) 
         #
         attr_accessor :enabled
         
         #
-        #  [] (Number) if empty, will be equal to left margin 
+        #  [] (Number / Number% / !Number) if empty, will be equal to left margin 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) if empty, will be 20px below x axis values 
+        #  [] (Number / Number% / !Number) if empty, will be 20px below x axis values 
         #
         attr_accessor :y
         
         #
-        #  [] (Number) if empty, will be equal to plot area width 
+        #  [] (Number / Number%) if empty, will be equal to plot area width 
         #
         attr_accessor :width
         
@@ -896,7 +1003,7 @@ module Ambling
         attr_accessor :max_columns
         
         #
-        #  [#FFFFFF] (hex color code) background color 
+        #  [#FFFFFF] (hex color code) background color. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -949,6 +1056,11 @@ module Ambling
         #  [false] (true / false) whether to sort legend entries in a reverse order 
         #
         attr_accessor :reverse_order
+        
+        #
+        #  [left] (left / center / right) alignment of legend entries 
+        #
+        attr_accessor :align
         
         #
         #  KEY (the color box near every legend entry) 
@@ -1012,6 +1124,33 @@ module Ambling
         end
       end
       #
+      # line chart can also display vertical lines/columns (set <vertical_lines>true</vertical_lines> in graph settings for that). If you also set <line_alpha>0</line_alpha> your line chart will become column chart 
+      #
+      class VerticalLines  
+        include Base
+        
+        VALUES = [:width,:alpha,:clustered,:mask]
+        #
+        #  [0] (0 - 100) width of vertical line in percents. 0 for hairline. Set > 0 if you want to have column 
+        #
+        attr_accessor :width
+        
+        #
+        #  [100] (0 - 100) 
+        #
+        attr_accessor :alpha
+        
+        #
+        #  [false] in case you have more then one graph with vertical lines enabled, you might want to place your columns next to each other, set true for that. 
+        #
+        attr_accessor :clustered
+        
+        #
+        #  [true] (true / false) as line chart by default starts on axis, and your column width is >0, then some part of first and last column will be outside plot area (incase you don't set <start_on_axis>false</false> Mask will cut off the part outside the plot area. Set to false if you don't want this. 
+        #
+        attr_accessor :mask
+      end
+      #
       #
       #
       class ZoomOutButton  
@@ -1019,12 +1158,12 @@ module Ambling
         
         VALUES = [:x,:y,:color,:alpha,:text_color,:text_color_hover,:text_size,:text]
         #
-        #  [] (Number) x position of zoom out button, if not defined, will be aligned to right of plot area 
+        #  [] (Number / Number% / !Number) x position of zoom out button, if not defined, will be aligned to right of plot area 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of zoom out button, if not defined, will be aligned to top of plot area 
+        #  [] (Number / Number% / !Number) y position of zoom out button, if not defined, will be aligned to top of plot area 
         #
         attr_accessor :y
         
@@ -1084,12 +1223,12 @@ module Ambling
           
           VALUES = [:x,:y,:color,:alpha,:text_color,:text_color_hover,:text_size,:text]
           #
-          #  [] (Number) x position of help button, if not defined, will be aligned to right of chart area 
+          #  [] (Number / Number% / !Number) x position of help button, if not defined, will be aligned to right of chart area 
           #
           attr_accessor :x
           
           #
-          #  [] (Number) y position of help button, if not defined, will be aligned to top of chart area 
+          #  [] (Number / Number% / !Number) y position of help button, if not defined, will be aligned to top of chart area 
           #
           attr_accessor :y
           
@@ -1179,12 +1318,12 @@ module Ambling
         attr_accessor :target
         
         #
-        #  [0] (Number) x position of "Collecting data" text 
+        #  [0] (Number / Number% / !Number) x position of "Collecting data" text 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
+        #  [] (Number / Number% / !Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
         #
         attr_accessor :y
         
@@ -1221,17 +1360,17 @@ module Ambling
         attr_accessor :enabled
         
         #
-        #  [] (Number) x position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) x position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) y position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :y
         
         #
-        #  [#BBBB00] (hex color code) background color of error message 
+        #  [#BBBB00] (hex color code) background color of error message. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -1283,6 +1422,37 @@ module Ambling
         attr_accessor :wrong_zoom_value
       end
       #
+      # <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      class ContextMenu  
+        include Base
+        
+        VALUES = [:default_items]
+        #
+        # 
+        #
+        attr_accessor :default_items
+        
+        
+        #
+        #
+        #
+        class DefaultItems  
+          include Base
+          
+          VALUES = [:zoom,:print]
+          #
+          #  [true] (true / false) to show or not flash players zoom menu 
+          #
+          attr_accessor :zoom
+          
+          #
+          #  [true] (true / false) to show or not flash players print menu 
+          #
+          attr_accessor :print
+        end
+      end
+      #
       # labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       class Labels  
@@ -1302,13 +1472,14 @@ module Ambling
           include Base
           
           VALUES = [:x,:y,:rotate,:width,:align,:text_color,:text_size,:text]
+          ATTRIBUTES = [:lid]
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :x
           
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :y
           
@@ -1318,7 +1489,7 @@ module Ambling
           attr_accessor :rotate
           
           #
-          #  [] (Number) if empty, will stretch from left to right untill label fits 
+          #  [] (Number / Number%) if empty, will stretch from left to right untill label fits 
           #
           attr_accessor :width
           
@@ -1341,6 +1512,11 @@ module Ambling
           #  [] (text) html tags may be used (supports <b>, <i>, <u>, <font>, <a href="">, <br/>. Enter text between []: <![CDATA[your <b>bold</b> and <i>italic</i> text]]>
           #
           attr_accessor :text
+          
+          #
+          # xml attribute
+          #
+          attr_accessor :lid
         end
       end
       #
@@ -1400,7 +1576,7 @@ module Ambling
           attr_accessor :fill_alpha
           
           #
-          #  [grpah.color] (hex color code) 
+          #  [grpah.color] (hex color code). Separate color codes with comas for gradient 
           #
           attr_accessor :fill_color
           
@@ -1420,7 +1596,7 @@ module Ambling
           attr_accessor :balloon_text_color
           
           #
-          #  The chart will look for this file in amline_path folder (amline_path is set in HTML) 
+          #  [] (square, round, square_outlined, round_outlined, square_outline, round_outline, square_outline, round_outline, filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color  The chart will look for this file in "path" folder ("path" is set in HTML) 
           #
           attr_accessor :bullet
           
@@ -1488,6 +1664,112 @@ module Ambling
           # xml attribute
           #
           attr_accessor :gid
+        end
+      end
+      #
+      # guides are straight lines drawn through all plot area at a give value. Can also be filled with color 
+      #
+      class Guides  
+        include Base
+        
+        VALUES = [:max_min,:guide]
+        #
+        #  [false] (true / false) whether to include guides' values when calculating min and max of a chart 
+        #
+        attr_accessor :max_min
+        
+        #
+        #  there can be any number of quides. guides can also be set in data xml file, using the same syntax as here 
+        #
+        attr_accessor :guide
+        
+        
+        #
+        # there can be any number of quides. guides can also be set in data xml file, using the same syntax as here 
+        #
+        class Guide  
+          include Base
+          
+          VALUES = [:axis,:start_value,:end_value,:title,:width,:color,:alpha,:fill_color,:fill_alpha,:inside,:centered,:rotate,:text_size,:text_color,:dashed,:dash_length]
+          #
+          #  [left] (left / right) y axis of a guide. There should be at least one graph assigned to this axis in order guide to be visible 
+          #
+          attr_accessor :axis
+          
+          #
+          #  (Number) value at which guide should be placed 
+          #
+          attr_accessor :start_value
+          
+          #
+          #  (Number) if you set value here too, another quide will be drawn. If you set fill alpha > 0, then the area between these quides will be filled with color 
+          #
+          attr_accessor :end_value
+          
+          #
+          #  [] (String) text which will be displayed near the guide 
+          #
+          attr_accessor :title
+          
+          #
+          #  [0] (Number) width of a guide line (0 for hairline) 
+          #
+          attr_accessor :width
+          
+          #
+          #  [#000000] (hex color code) color of guide line 
+          #
+          attr_accessor :color
+          
+          #
+          #  [100] (0 - 100) opacity of guide line 
+          #
+          attr_accessor :alpha
+          
+          #
+          #  [guide.color] (hex color code) fill color. If not defined, color of a guide will be used. Separate color codes with comas for gradient 
+          #
+          attr_accessor :fill_color
+          
+          #
+          #  [0] (0 - 100) opacity of a fill 
+          #
+          attr_accessor :fill_alpha
+          
+          #
+          #  [values.y_{axis}.inside] whether to place title inside plot area 
+          #
+          attr_accessor :inside
+          
+          #
+          #  [true] (true / false) if you have start and end values defined, title can be placed in the middle between these values. If false, it will be placed near start_value 
+          #
+          attr_accessor :centered
+          
+          #
+          #  [values.y_{axis}.rotate](0 - 90) angle of rotation of title 
+          #
+          attr_accessor :rotate
+          
+          #
+          #  [values.y_{axis}.text_size] (Number) 
+          #
+          attr_accessor :text_size
+          
+          #
+          #  [values.y_{axis}.color](hex color code) 
+          #
+          attr_accessor :text_color
+          
+          #
+          #  [false] (true / false) 
+          #
+          attr_accessor :dashed
+          
+          #
+          #  [5] (Number) 
+          #
+          attr_accessor :dash_length
         end
       end    
     end

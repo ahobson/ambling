@@ -8,7 +8,6 @@ require 'ambling/utils'
 class GeneratorTest < Test::Unit::TestCase
   
   def setup
-    super
     begin
       Ambling::Column::Settings
     rescue

@@ -1,5 +1,4 @@
 # Base module for settings
-require 'builder'
 require 'active_support'
 
 # the version of builder that comes with activesupport-1.4.4 is busted for builder.tag!(:y)

@@ -3,6 +3,7 @@
 <!-- This means, that if you are happy with this value, you can delete this line at all and reduce file size         -->
 <!-- value or explanation between () brackets shows the range or type of values you should use for this parameter    -->
 <!-- the top left corner has coordinates x = 0, y = 0                                                                -->
+<!-- "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom -->
 
 <settings> 
   <data_type>xml</data_type>                                  <!-- [xml] (xml / csv) -->
@@ -12,7 +13,7 @@
   <text_size></text_size>                                     <!-- [11] (Number) text size of all texts. Every text size can be set individually in the settings below -->
   <text_color></text_color>                                   <!-- [#000000] (hex color code) main text color. Every text color can be set individually in the settings below-->
   <decimals_separator></decimals_separator>                   <!-- [,] (string) decimal separator. Note, that this is for displaying data only. Decimals in data xml file must be separated with a dot -->
-  <thousands_separator></thousands_separator>                 <!-- [ ] (string) thousand separator -->
+  <thousands_separator></thousands_separator>                 <!-- [ ] (string) thousand separator. use "none" if you don't want to separate -->
   <digits_after_decimal></digits_after_decimal>               <!-- [] (Number) if your value has less digits after decimal then is set here, zeroes will be added -->
   <reload_data_interval></reload_data_interval>               <!-- [0] (Number) how often data should be reloaded (time in seconds) -->
   <preloader_on_reload></preloader_on_reload>                 <!-- [false] (true / false) Whether to show preloaded when data or settings are reloaded -->
@@ -22,45 +23,51 @@
   <exclude_invisible></exclude_invisible>                     <!-- [false] (true / false) whether to exclude invisible slices (where alpha=0) then calculating percent values or not -->
                                                                 
   <pie>
-    <x></x>                                                   <!-- [](Number) If left empty, will be positioned in the center -->
-    <y></y>                                                   <!-- [](Number) If left empty, will be positioned in the center - 20px -->
-    <radius>90</radius>                                       <!-- [] (Number) If left empty, will be 25% of your chart smaller side -->
-    <inner_radius></inner_radius>                             <!-- [0] (Number) the radius of the hole (if you want to have donut, use > 0) -->
-    <height>2</height>                                        <!-- [0] (Number) pie height (for 3D effect) -->
+    <x></x>                                                   <!-- [50%](Number / Number% / !Number) -->
+    <y></y>                                                   <!-- [45%](Number / Number% / !Number) -->
+    <radius>90</radius>                                       <!-- [25%] (Number / Number%) -->
+    <inner_radius></inner_radius>                             <!-- [0] (Number / Number%) the radius of the hole (if you want to have donut, use > 0) -->
+    <height>0</height>                                        <!-- [0] (Number) pie height (for 3D effect) -->
     <angle>0</angle>                                          <!-- [0] (0 - 90) lean angle (for 3D effect) -->
+    <start_angle></start_angle>                               <!-- [90] (0-360) angle of a first slice. This will work properly only if <pie><height> is set to 0. If height is > 0, then there can be two angles only: 90 and 270 -->
     <outline_color></outline_color>                           <!-- [#FFFFFF] (hex color code) -->    
     <outline_alpha></outline_alpha>                           <!-- [0] (Number) -->
     <base_color></base_color>                                 <!-- [] (hex color code) color of first slice -->
     <brightness_step></brightness_step>                       <!-- [20] (-100 - 100) if base_color is used, every next slice is filled with lighter by brightnessStep % color. Use negative value if you want to get darker colors -->
-    <colors></colors>                                         <!-- [0xFF0F00,0xFF6600,0xFF9E01,0xFCD202,0xF8FF01,0xB0DE09,0x04D215,0x0D8ECF,0x0D52D1,0x2A0CD0,0x8A0CCF,0xCD0D74] (hex color codes separated by comas) -->
+    <colors></colors>                                         <!-- [#FF0F00,#FF6600,#FF9E01,#FCD202,#F8FF01,#B0DE09,#04D215,#0D8ECF,#0D52D1,#2A0CD0,#8A0CCF,#CD0D74,#754DEB,#DDDDDD,#999999,#333333,#990000] (hex color codes separated by comas) -->
     <link_target></link_target>                               <!-- [] (_blank, _top...) If pie slice has a link this is link target -->
     <alpha></alpha>                                           <!-- [100] (0 - 100) slices alpha. You can set individual alphas for every slice in data file. If you set alpha to 0 the slice will be inactive for mouse events and data labels will be hidden. This allows you to make not full pies and donuts. -->
+    <hover_brightness></hover_brightness>                     <!-- [0] (from -255 to 255) The pie slice may darken/lighten when the use rolls over it. The intensity may be set here -->
+    <gradient></gradient>                                     <!-- [] (linear/radial) Allows slices to be filled with gradient colors -->
+    <gradient_ratio></gradient_ratio>                         <!-- [0,-40] (Numbers from (-255 to 255) separated by commas) Controls the gradient ratio -->    
   </pie>
   
   <animation>
     <start_time>2</start_time>                                <!-- [0] (Number) fly-in time in seconds. Leave 0 to appear instantly -->
     <start_effect>strong</start_effect>                       <!-- [bounce] (bounce, regular, strong) -->
-    <start_radius></start_radius>                             <!-- [] (Number) if left empty, will use pie.radius * 5 -->
-    <start_alpha></start_alpha>                               <!-- [0] (Number) -->                
+    <start_radius></start_radius>                             <!-- [500%] (Number / Number%) -->
+    <start_alpha></start_alpha>                               <!-- [0] (Number) -->
+    <sequenced>true</sequenced>                               <!-- [false] (true / false) Whether the slices should appear all together or one after another -->                
     <pull_out_on_click></pull_out_on_click>                   <!-- [true] (true / false) whether to pull out slices when user clicks on them (or on legend entry) -->
     <pull_out_time>1.5</pull_out_time>                        <!-- [0] (number) pull-out time (then user clicks on the slice) -->
     <pull_out_effect>Bounce</pull_out_effect>                 <!-- [bounce] (bounce, regular, strong) -->
-    <pull_out_radius></pull_out_radius>                       <!-- [] (Number) how far pie slices should be pulled-out then user clicks on them (if left empty, uses 20% of pie radius) -->
+    <pull_out_radius></pull_out_radius>                       <!-- [20%] (Number / Number%) how far pie slices should be pulled-out then user clicks on them -->
     <pull_out_only_one></pull_out_only_one>                   <!-- [false] (true / false) if set to true, when you click on any slice, all other slices will be pushed in -->        
   </animation>
   
   <data_labels>
-    <radius></radius>                                         <!-- [30] (Number) distance of the labels from the pie. Use negative value to place labels on the pie -->
+    <radius></radius>                                         <!-- [20%] (Number / Number%) distance of the labels from the pie. Use negative value to place labels on the pie -->
     <text_color></text_color>                                 <!-- [text_color] (hex color code) -->
     <text_size></text_size>                                   <!-- [text_size] (Number) -->
     <max_width></max_width>                                   <!-- [120] (Number) -->
     <show>
-       <![CDATA[{title}: {percents}%]]>                        <!-- [] ({value} {title} {percents}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. -->
+       <![CDATA[{title}: {percents}%]]>                       <!-- [] ({value} {title} {percents} {description}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. -->
     </show>
     <show_lines></show_lines>                                 <!-- [true] (true / false) whether to show lines from slices to data labels or not -->                                                                                              
     <line_color></line_color>                                 <!-- [#000000] (hex color code) -->
     <line_alpha></line_alpha>                                 <!-- [15] (Number) -->
-    <hide_labels_percent>0</hide_labels_percent>              <!-- [0] data labels of slices less then skip_labels_percent% will be hidden (to avoid label overlapping if there are many small pie slices)-->                                       
+    <hide_labels_percent></hide_labels_percent>               <!-- [0] data labels of slices less then skip_labels_percent% will be hidden (to avoid label overlapping if there are many small pie slices)-->
+    <avoid_overlapping></avoid_overlapping>                   <!-- [true] (true / false) Whether to change data labels positions so that they wouldn't overlap or not -->                                       
   </data_labels>
 
   <group>
@@ -73,7 +80,7 @@
   </group>
 
   <background>                                                <!-- BACKGROUND -->
-    <color></color>                                           <!-- [#FFFFFF] (hex color code) -->
+    <color></color>                                           <!-- [#FFFFFF] (hex color code) Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) use 0 if you are using custom swf or jpg for background -->
     <border_color></border_color>                             <!-- [#000000] (hex color code) -->
     <border_alpha></border_alpha>                             <!-- [0] (0 - 100) -->
@@ -85,19 +92,24 @@
     <enabled></enabled>                                       <!-- [true] (true / false) -->
     <color></color>                                           <!-- [] (hex color code) balloon background color. If empty, slightly darker then current slice color will be used -->
     <alpha>80</alpha>                                         <!-- [80] (0 - 100) -->
-    <text_color></text_color>                                 <!-- [0xFFFFFF] (hex color code) -->
+    <text_color></text_color>                                 <!-- [#FFFFFF] (hex color code) -->
     <text_size></text_size>                                   <!-- [text_size] (Number) -->    
     <show>
-       <![CDATA[{title}: {value} ({percents}%)]]>              <!-- [] ({value} {title} {percents}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. -->
+       <![CDATA[]]>                                           <!-- [{title}: {percents}% ({value}) <br>{description}] ({value} {title} {percents} {description}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. -->
     </show>
+    <max_width></max_width>                                   <!-- [220] (Number) The maximum width of a balloon -->
+    <corner_radius></corner_radius>                           <!-- [0] (Number) Corner radius of a balloon. If you set it > 0, the balloon will not display arrow -->
+    <border_width></border_width>                             <!-- [0] (Number) -->
+    <border_alpha></border_alpha>                             <!-- [balloon.alpha] (Number) -->
+    <border_color></border_color>                             <!-- [balloon.color] (hex color code) -->   
   </balloon>
     
   <legend>                                                    <!-- LEGEND -->
     <enabled></enabled>                                       <!-- [true] (true / false) -->
-    <x></x>                                                   <!-- [40] (Number) -->
-    <y></y>                                                   <!-- [] (Number) if empty, will be below the pie -->
-    <width></width>                                           <!-- [] (Number) if empty, will be equal to flash width-80 -->
-    <color></color>                                           <!-- [#FFFFFF] (hex color code) background color -->
+    <x></x>                                                   <!-- [5%] (Number / Number% / !Number) -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) if empty, will be placed below the pie -->
+    <width></width>                                           <!-- [90%] (Number / Number%) -->
+    <color></color>                                           <!-- [#FFFFFF] (hex color code) background color. Separate color codes with comas for gradient -->
     <max_columns></max_columns>                               <!-- [] (Number) the maximum number of columns in the legend -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) background alpha -->
     <border_color></border_color>                             <!-- [#000000] (hex color code) border color -->
@@ -107,6 +119,7 @@
     <spacing>9</spacing>                                      <!-- [10] (Number) vertical and horizontal gap between legend entries -->
     <margins>5</margins>                                      <!-- [0] (Number) legend margins (space between legend border and legend entries, recommended to use only if legend border is visible or background color is different from chart area background color) -->
     <reverse_order></reverse_order>                           <!-- [false] (true / false) whether to sort legend entries in a reverse order -->
+    <align>center</align>                                     <!-- [left] (left / center / right) alignment of legend entries -->
     <key>                                                     <!-- KEY (the color box near every legend entry) -->
       <size></size>                                           <!-- [16] (Number) key size-->
       <border_color></border_color>                           <!-- [] (hex color code) leave empty if you don't want to have border -->
@@ -121,8 +134,8 @@
   <export_as_image>                                           <!-- export_as_image feature works only on a web server -->
     <file></file>                                             <!-- [] (filename) if you set filename here, context menu (then user right clicks on flash movie) "Export as image" will appear. This will allow user to export chart as an image. Collected image data will be posted to this file name (use ampie/export.php or ampie/export.aspx) -->
     <target></target>                                         <!-- [] (_blank, _top ...) target of a window in which export file must be called -->
-    <x></x>                                                   <!-- [0] (Number) x position of "Collecting data" text -->
-    <y></y>                                                   <!-- [] (Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie -->
+    <x></x>                                                   <!-- [0] (Number / Number% / !Number) x position of "Collecting data" text -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie -->
     <color></color>                                           <!-- [#BBBB00] (hex color code) background color of "Collecting data" text -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) background alpha -->
     <text_color></text_color>                                 <!-- [text_color] (hex color code) -->
@@ -131,9 +144,9 @@
   
   <error_messages>                                            <!-- "error_messages" settings will be applied for all error messages except the one which is showed if settings file wasn't found -->
     <enabled></enabled>                                       <!-- [true] (true / false) -->
-    <x></x>                                                   <!-- [] (Number) x position of error message. If not set, will be aligned to the center -->
-    <y></y>                                                   <!-- [] (Number) y position of error message. If not set, will be aligned to the center -->
-    <color></color>                                           <!-- [#BBBB00] (hex color code) background color of error message -->
+    <x></x>                                                   <!-- [] (Number / Number% / !Number) x position of error message. If not set, will be aligned to the center -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) y position of error message. If not set, will be aligned to the center -->
+    <color></color>                                           <!-- [#BBBB00] (hex color code) background color of error message. Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [100] (0 - 100) background alpha -->
     <text_color></text_color>                                 <!-- [#FFFFFF] (hex color code) -->
     <text_size></text_size>                                   <!-- [text_size] (Number) -->
@@ -145,14 +158,27 @@
     <collecting_data></collecting_data>                       <!-- [Collecting data] (text) this text is displayed while exporting chart to an image -->
   </strings>  
   
+  <context_menu>                                              <!-- context menu allows you to controll right-click menu items. You can add custom menu items to create custom controls -->                                                              
+                                                              <!-- "function_name" specifies JavaScript function which will be called when user clicks on this menu. You can pass variables, for example: function_name="alert('something')" -->
+                                                              <!-- "title" sets menu item text. Do not use for title: Show all, Zoom in, Zoom out, Print, Settings... -->
+                                                              <!-- you can have any number of custom menus. Uncomment the line below to enable this menu and add apropriate JS function to your html file. -->
+     
+     <!-- <menu function_name="printChart" title="Print chart"></menu> -->
+     
+     <default_items>
+       <zoom>false</zoom>                                     <!-- [true] (true / false) to show or not flash players zoom menu -->
+       <print>false</print>                                   <!-- [true] (true / false) to show or not flash players print menu -->
+     </default_items>
+  </context_menu>  
+  
   <labels>                                                    <!-- LABELS -->
                                                               <!-- you can add as many labels as you want -->
                                                               <!-- labels can also be added in data xml file, using exactly the same structure like it is here -->
-    <label>
-      <x>0</x>                                                <!-- [0] (Number) -->
-      <y>10</y>                                               <!-- [0] (Number) -->
+    <label lid="0">
+      <x>0</x>                                                <!-- [0] (Number / Number% / !Number) -->
+      <y>10</y>                                               <!-- [0] (Number / Number% / !Number) -->
       <rotate>false</rotate>                                  <!-- [false] (true / false) -->
-      <width></width>                                         <!-- [] (Number) if empty, will stretch from left to right untill label fits -->
+      <width></width>                                         <!-- [] (Number / Number%) if empty, will stretch from left to right untill label fits -->
       <align>center</align>                                   <!-- [left] (left / center / right) -->  
       <text_color></text_color>                               <!-- [text_color] (hex color code) button text color -->
       <text_size>12</text_size>                               <!-- [text_size](Number) button text size -->
@@ -161,4 +187,9 @@
       </text>        
     </label>
   </labels>
+  
+	<!-- DATA can also be set in settings file. Just place data in CSV or XML format between <data></data> -->
+	
+	<!--<data>
+	</data> -->  
 </settings>

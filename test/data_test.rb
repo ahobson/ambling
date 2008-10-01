@@ -52,7 +52,7 @@ class DataTest < Test::Unit::TestCase
     advanced_chart.graphs.last << Ambling::Data::Value.new(1000, :xid => 1, :color => '#AAAAAA', :url => "http://yp.to")
     advanced_chart.graphs.last << Ambling::Data::Value.new(2000, :xid => 2, :color => '#BBBBBB', :start => 5)
     
-    puts advanced_chart.to_xml
+    # puts advanced_chart.to_xml
     
     assert_xml_equal @advanced_chart_xml, advanced_chart.to_xml,
       "Expected |#{@advanced_chart_xml}| but was |#{advanced_chart.to_xml}|"

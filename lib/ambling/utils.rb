@@ -89,7 +89,9 @@ module Ambling #:nodoc
             if current_section_data.values.empty?
               current_section_data.comment = data
             else
-              current_section_data.values[last_element].comment = data
+              if current_section_data.values[last_element]
+                current_section_data.values[last_element].comment = data
+              end
             end
           end
         end
@@ -98,7 +100,7 @@ module Ambling #:nodoc
         top_level.comment = section_data.comment if top_level.comment.blank?
         
         cdef = "# Auto generated from XML file\n"
-        cef << "require 'ambling/base'\nmodule Ambling\n  class #{chart_type.to_s.camelize}\n"
+        cdef << "require 'ambling/base'\nmodule Ambling\n  class #{chart_type.to_s.camelize}\n"
         cdef << top_level.to_class_s(4)
         cdef << "\n  end\nend\n"
       end

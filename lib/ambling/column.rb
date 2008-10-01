@@ -4,12 +4,12 @@ module Ambling
   class Column
     
     #
-    # value or explanation between () brackets shows the range or type of values you should use for this parameter 
+    # "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom 
     #
     class Settings      
       include Base
       
-      VALUES = [:type,:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:depth,:angle,:column,:line,:background,:plot_area,:grid,:values,:axes,:balloon,:legend,:export_as_image,:error_messages,:strings,:labels,:graphs]
+      VALUES = [:type,:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:depth,:angle,:colors,:column,:line,:background,:plot_area,:grid,:values,:axes,:balloon,:legend,:export_as_image,:error_messages,:strings,:context_menu,:labels,:graphs,:guides]
       #
       #  [column] (column / bar) 
       #
@@ -51,7 +51,7 @@ module Ambling
       attr_accessor :decimals_separator
       
       #
-      #  [ ] (string) thousand separator 
+      #  [ ] (string) thousand separator. use "none" if you don't want to separate 
       #
       attr_accessor :thousands_separator
       
@@ -94,6 +94,11 @@ module Ambling
       #  [30] (0 - 90) angle of chart area and columns (for 3D effect) 
       #
       attr_accessor :angle
+      
+      #
+      #  [#FF6600,#FCD202,#B0DE09,#0D8ECF,#2A0CD0,#CD0D74,#CC0000,#00CC00,#0000CC,#DDDDDD,#999999,#333333,#990000] Colors of graphs. if the graph color is not set, color from this array will be used 
+      #
+      attr_accessor :colors
       
       #
       # 
@@ -156,6 +161,11 @@ module Ambling
       attr_accessor :strings
       
       #
+      #  <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      attr_accessor :context_menu
+      
+      #
       #  labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       attr_accessor :labels
@@ -165,6 +175,11 @@ module Ambling
       #
       attr_accessor :graphs
       
+      #
+      #  guides are straight lines drawn through all plot area at a give value. Can also be filled with color 
+      #
+      attr_accessor :guides
+      
       
       #
       #
@@ -172,9 +187,9 @@ module Ambling
       class Column  
         include Base
         
-        VALUES = [:type,:width,:spacing,:grow_time,:grow_effect,:alpha,:border_color,:border_alpha,:data_labels,:data_labels_text_color,:data_labels_text_size,:data_labels_position,:balloon_text,:link_target,:gradient,:bullet_offset]
+        VALUES = [:type,:width,:spacing,:grow_time,:grow_effect,:sequenced_grow,:alpha,:border_color,:border_alpha,:data_labels,:data_labels_text_color,:data_labels_text_size,:data_labels_position,:balloon_text,:link_target,:gradient,:bullet_offset,:hover_brightness]
         #
-        #  [clustered] (stacked, 100% stacked) 
+        #  [clustered] (clustered, stacked, 100% stacked, 3d column) 
         #
         attr_accessor :type
         
@@ -197,6 +212,11 @@ module Ambling
         #  [elastic] (elastic, regular, strong) 
         #
         attr_accessor :grow_effect
+        
+        #
+        #  [false] (true / false) whether columns should grow at the same time or one after another 
+        #
+        attr_accessor :sequenced_grow
         
         #
         #  [100] (Number) alpha of all columns 
@@ -252,6 +272,11 @@ module Ambling
         #  [0] (Number) distance from column / bar to the bullet 
         #
         attr_accessor :bullet_offset
+        
+        #
+        #  [0] (from -255 to 255) The column may darken/lighten when the use rolls over it. The intensity may be set here 
+        #
+        attr_accessor :hover_brightness
       end
       #
       # Here are general settings for "line" graph type. You can set most of these settings for individual lines in graph settings below 
@@ -281,7 +306,7 @@ module Ambling
         attr_accessor :fill_alpha
         
         #
-        #  [] (square, round, square_outlined, round_outlined, filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color 
+        #  [] (square, round, square_outlined, round_outlined, square_outline, round_outline, filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color 
         #
         attr_accessor :bullet
         
@@ -323,7 +348,7 @@ module Ambling
         
         VALUES = [:color,:alpha,:border_color,:border_alpha,:file]
         #
-        #  [#FFFFFF] (hex color code) 
+        #  [#FFFFFF] (hex color code) Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -343,7 +368,7 @@ module Ambling
         attr_accessor :border_alpha
         
         #
-        #  The chart will look for this file in amcolumn_path folder (amcolumn_path is set in HTML) 
+        #  The chart will look for this file in "path" folder ("path" is set in HTML) 
         #
         attr_accessor :file
       end
@@ -355,7 +380,7 @@ module Ambling
         
         VALUES = [:color,:alpha,:border_color,:border_alpha,:margins]
         #
-        #  [#FFFFFF](hex color code) 
+        #  [#FFFFFF](hex color code) Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -459,7 +484,7 @@ module Ambling
         class Value  
           include Base
           
-          VALUES = [:color,:alpha,:dashed,:dash_length,:approx_count]
+          VALUES = [:color,:alpha,:dashed,:dash_length,:approx_count,:fill_color,:fill_alpha]
           #
           #  [#000000] (hex color code) 
           #
@@ -484,6 +509,16 @@ module Ambling
           #  [10] (Number) approximate number of gridlines 
           #
           attr_accessor :approx_count
+          
+          #
+          #  [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) 
+          #
+          attr_accessor :fill_color
+          
+          #
+          #  [0] (0 - 100) opacity of fill 
+          #
+          attr_accessor :fill_alpha
         end
       end
       #
@@ -510,7 +545,7 @@ module Ambling
         class Category  
           include Base
           
-          VALUES = [:enabled,:frequency,:rotate,:color,:text_size,:inside]
+          VALUES = [:enabled,:frequency,:start_from,:rotate,:color,:text_size,:inside]
           #
           #  [true] (true / false) 
           #
@@ -520,6 +555,11 @@ module Ambling
           #  [1] (Number) how often values should be placed 
           #
           attr_accessor :frequency
+          
+          #
+          #  [1] (Number) you can set series from which category values will be displayed 
+          #
+          attr_accessor :start_from
           
           #
           #  [0] (0 - 90) angle of rotation. If you want to rotate by degree from 1 to 89, you must have font.swf file in fonts folder 
@@ -708,7 +748,7 @@ module Ambling
       class Balloon  
         include Base
         
-        VALUES = [:enabled,:color,:alpha,:text_color,:text_size]
+        VALUES = [:enabled,:color,:alpha,:text_color,:text_size,:max_width,:corner_radius,:border_width,:border_alpha,:border_color]
         #
         #  [true] (true / false) 
         #
@@ -733,6 +773,31 @@ module Ambling
         #  [text_size] (Number) 
         #
         attr_accessor :text_size
+        
+        #
+        #  [220] (Number) The maximum width of a balloon 
+        #
+        attr_accessor :max_width
+        
+        #
+        #  [0] (Number) Corner radius of a balloon. If you set it > 0, the balloon will not display arrow 
+        #
+        attr_accessor :corner_radius
+        
+        #
+        #  [0] (Number) 
+        #
+        attr_accessor :border_width
+        
+        #
+        #  [balloon.alpha] (Number) 
+        #
+        attr_accessor :border_alpha
+        
+        #
+        #  [balloon.color] (hex color code) 
+        #
+        attr_accessor :border_color
       end
       #
       # LEGEND 
@@ -740,24 +805,24 @@ module Ambling
       class Legend  
         include Base
         
-        VALUES = [:enabled,:x,:y,:width,:max_columns,:color,:alpha,:border_color,:border_alpha,:text_color,:text_size,:spacing,:margins,:reverse_order,:key]
+        VALUES = [:enabled,:x,:y,:width,:max_columns,:color,:alpha,:border_color,:border_alpha,:text_color,:text_size,:spacing,:margins,:reverse_order,:align,:key]
         #
         #  [true] (true / false) 
         #
         attr_accessor :enabled
         
         #
-        #  [] (Number) if empty, will be equal to left margin 
+        #  [] (Number / Number% / !Number) if empty, will be equal to left margin 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) if empty, will be below plot area 
+        #  [] (Number / Number% / !Number) if empty, will be below plot area 
         #
         attr_accessor :y
         
         #
-        #  [] (Number) if empty, will be equal to plot area width 
+        #  [] (Number / Number%) if empty, will be equal to plot area width 
         #
         attr_accessor :width
         
@@ -767,7 +832,7 @@ module Ambling
         attr_accessor :max_columns
         
         #
-        #  [#FFFFFF] (hex color code) background color 
+        #  [#FFFFFF] (hex color code) background color. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -812,6 +877,11 @@ module Ambling
         attr_accessor :reverse_order
         
         #
+        #  [left] (left / center / right) alignment of legend entries 
+        #
+        attr_accessor :align
+        
+        #
         #  KEY (the color box near every legend entry) 
         #
         attr_accessor :key
@@ -853,12 +923,12 @@ module Ambling
         attr_accessor :target
         
         #
-        #  [0] (Number) x position of "Collecting data" text 
+        #  [0] (Number / Number% / !Number) x position of "Collecting data" text 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
+        #  [] (Number / Number% / !Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
         #
         attr_accessor :y
         
@@ -895,17 +965,17 @@ module Ambling
         attr_accessor :enabled
         
         #
-        #  [] (Number) x position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) x position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) y position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :y
         
         #
-        #  [#BBBB00] (hex color code) background color of error message 
+        #  [#BBBB00] (hex color code) background color of error message. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -947,6 +1017,37 @@ module Ambling
         attr_accessor :collecting_data
       end
       #
+      # <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      class ContextMenu  
+        include Base
+        
+        VALUES = [:default_items]
+        #
+        # 
+        #
+        attr_accessor :default_items
+        
+        
+        #
+        #
+        #
+        class DefaultItems  
+          include Base
+          
+          VALUES = [:zoom,:print]
+          #
+          #  [true] (true / false) to show or not flash players zoom menu 
+          #
+          attr_accessor :zoom
+          
+          #
+          #  [true] (true / false) to show or not flash players print menu 
+          #
+          attr_accessor :print
+        end
+      end
+      #
       # labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       class Labels  
@@ -966,23 +1067,24 @@ module Ambling
           include Base
           
           VALUES = [:x,:y,:rotate,:width,:align,:text_color,:text_size,:text]
+          ATTRIBUTES = [:lid]
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :x
           
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :y
           
           #
-          #  [false] (true, false) 
+          #  [false] (true / false) 
           #
           attr_accessor :rotate
           
           #
-          #  [] (Number) if empty, will stretch from left to right untill label fits 
+          #  [] (Number / Number%) if empty, will stretch from left to right untill label fits 
           #
           attr_accessor :width
           
@@ -1005,6 +1107,11 @@ module Ambling
           #  [] (text) html tags may be used (supports <b>, <i>, <u>, <font>, <a href="">, <br/>. Enter text between []: <![CDATA[your <b>bold</b> and <i>italic</i> text]]>
           #
           attr_accessor :text
+          
+          #
+          # xml attribute
+          #
+          attr_accessor :lid
         end
       end
       #
@@ -1029,7 +1136,7 @@ module Ambling
           VALUES = [:type,:title,:color,:alpha,:data_labels,:gradient_fill_colors,:balloon_color,:balloon_alpha,:balloon_text_color,:balloon_text,:fill_alpha,:width,:bullet,:bullet_size,:bullet_color,:visible_in_legend]
           ATTRIBUTES = [:gid]
           #
-          # 
+          #  [column] (column/line) 
           #
           attr_accessor :type
           
@@ -1039,7 +1146,7 @@ module Ambling
           attr_accessor :title
           
           #
-          #  [] (hex color code)  
+          #  [] (hex color code) 
           #
           attr_accessor :color
           
@@ -1089,7 +1196,7 @@ module Ambling
           attr_accessor :width
           
           #
-          #  [line.bullet] (round, square, round_outlined, square_outlined, filename) 
+          #  [line.bullet] (round, square, round_outlined, square_outline, round_outline, square_outlined, filename) 
           #
           attr_accessor :bullet
           
@@ -1112,6 +1219,112 @@ module Ambling
           # xml attribute
           #
           attr_accessor :gid
+        end
+      end
+      #
+      # guides are straight lines drawn through all plot area at a give value. Can also be filled with color 
+      #
+      class Guides  
+        include Base
+        
+        VALUES = [:max_min,:guide]
+        #
+        #  [false] (true / false) whether to include guides' values when calculating min and max of a chart 
+        #
+        attr_accessor :max_min
+        
+        #
+        #  there can be any number of quides. guides can also be set in data xml file, using the same syntax as here 
+        #
+        attr_accessor :guide
+        
+        
+        #
+        # there can be any number of quides. guides can also be set in data xml file, using the same syntax as here 
+        #
+        class Guide  
+          include Base
+          
+          VALUES = [:behind,:start_value,:end_value,:title,:width,:color,:alpha,:fill_color,:fill_alpha,:inside,:centered,:rotate,:text_size,:text_color,:dashed,:dash_length]
+          #
+          #  [false] (true / false) whether your guides should appear in front of columns or behind them 
+          #
+          attr_accessor :behind
+          
+          #
+          #  (number) value at which guide should be placed 
+          #
+          attr_accessor :start_value
+          
+          #
+          #  (number) if you set value here too, another quide will be drawn. If you set fill alpha > 0, then the area between these quides will be filled with color 
+          #
+          attr_accessor :end_value
+          
+          #
+          #  (string) text which will be displayed near the guide 
+          #
+          attr_accessor :title
+          
+          #
+          #  [0] (Number) width of a guide line (0 for hairline) 
+          #
+          attr_accessor :width
+          
+          #
+          #  [#000000] (hex color code) color of guide line 
+          #
+          attr_accessor :color
+          
+          #
+          #  [100] (0 - 100) opacity of guide line 
+          #
+          attr_accessor :alpha
+          
+          #
+          #  [guide.color] (hex color code) fill color. If not defined, color of a guide will be used. Separate color codes with comas for gradient 
+          #
+          attr_accessor :fill_color
+          
+          #
+          #  [0] (0 - 100) opacity of a fill 
+          #
+          attr_accessor :fill_alpha
+          
+          #
+          #  [values.value.inside] whether to place title inside plot area 
+          #
+          attr_accessor :inside
+          
+          #
+          #  [true] (true / false) if you have start and end values defined, title can be placed in the middle between these values. If false, it will be placed near start_value 
+          #
+          attr_accessor :centered
+          
+          #
+          #  [values.value.rotate] (0 - 90) angle of rotation of title. 
+          #
+          attr_accessor :rotate
+          
+          #
+          #  [values.value.text_size] (Number)  
+          #
+          attr_accessor :text_size
+          
+          #
+          #  [values.value.color] (hex color code) 
+          #
+          attr_accessor :text_color
+          
+          #
+          #  [false] (true / false) 
+          #
+          attr_accessor :dashed
+          
+          #
+          #  [5] (Number) 
+          #
+          attr_accessor :dash_length
         end
       end    
     end

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Value between [] brackets, for example [#FFFFFF] shows default value which is used if this parameter is not set -->
 <!-- This means, that if you are happy with this value, you can delete this line at all and reduce file size -->
-<!-- value or explanation between () brackets shows the range or type of values you should use for this parameter -->
+<!-- the top left corner has coordinates x = 0, y = 0                                                                -->
+<!-- "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom -->
 <settings> 
   <data_type></data_type>                                     <!-- [xml] (xml / csv) -->
   <csv_separator></csv_separator>                             <!-- [;] (string) csv file data separator (you need it only if you are using csv file for your data) -->     
@@ -10,7 +11,7 @@
   <text_size></text_size>                                     <!-- [11] (Number) text size of all texts. Every text size can be set individually in the settings below -->
   <text_color></text_color>                                   <!-- [#000000] (hex color code) main text color. Every text color can be set individually in the settings below-->
   <decimals_separator></decimals_separator>                   <!-- [,] (string) decimal separator. Note, that this is for displaying data only. Decimals in data xml file must be separated with a dot -->
-  <thousands_separator></thousands_separator>                 <!-- [ ] (string) thousand separator -->
+  <thousands_separator></thousands_separator>                 <!-- [ ] (string) thousand separator. use "none" if you don't want to separate -->
   <digits_after_decimal></digits_after_decimal>               <!-- [] (Number) if your value has less digits after decimal then is set here, zeroes will be added -->
   <redraw></redraw>                                           <!-- [false] (true / false) if your chart's width or height is set in percents, and redraw is set to true, the chart will be redrawn then screen size changes -->
   <reload_data_interval></reload_data_interval>               <!-- [0] (Number) how often data should be reloaded (time in seconds) -->
@@ -19,19 +20,20 @@
   <depth></depth>                                             <!-- [0] (Number) the depth of chart and columns (for 3D effect) -->
   <angle></angle>                                             <!-- [30] (0 - 90) angle of chart area and columns (for 3D effect) -->
   <link_target></link_target>                                 <!-- [] (_blank, _top ...) -->
-  <mask></mask>                                               <!-- [true] if true, bubbles, data labels will be masked withing plot area -->                  
+  <mask></mask>                                               <!-- [true] if true, bubbles, data labels will be masked within plot area. If the <zoom> is enabled, this setting is always "true" -->                  
+  <colors></colors>                                           <!-- [#FF6600,#FCD202,#B0DE09,#0D8ECF,#2A0CD0,#CD0D74,#CC0000,#00CC00,#0000CC,#DDDDDD,#999999,#333333,#990000] Colors of graphs. if the graph color is not set, color from this array will be used -->
 
   <background>                                                <!-- BACKGROUND -->
-    <color></color>                                           <!-- [#FFFFFF] (hex color code) -->
+    <color></color>                                           <!-- [#FFFFFF] (hex color code) Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) use 0 if you are using custom swf or jpg for background -->
     <border_color></border_color>                             <!-- [#000000] (hex color code) -->
     <border_alpha></border_alpha>                             <!-- [0] (0 - 100) -->
     <file></file>                                             <!-- [] (filename) swf or jpg file of a background. Do not use progressive jpg file, it will be not visible with flash player 7 -->
-                                                              <!-- The chart will look for this file in amcolumn_path folder (amcolumn_path is set in HTML) -->
+                                                              <!-- The chart will look for this file in "path" folder ("path" is set in HTML) -->
   </background>
      
   <plot_area>                                                 <!-- PLOT AREA (the area between axes) -->
-    <color></color>                                           <!-- [#FFFFFF](hex color code) -->
+    <color></color>                                           <!-- [#FFFFFF](hex color code) Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) if you want it to be different than background color, use bigger than 0 value -->
     <border_color></border_color>                             <!-- [#000000] (hex color code) -->                                        
     <border_alpha></border_alpha>                             <!-- [0] (0 - 100) -->                                        
@@ -44,19 +46,24 @@
   </plot_area>
   
   <grid>                                                      <!-- GRID -->
-    <x>                                                       <!-- x axis grid -->                                                     
+    <x>                                                       <!-- x axis grid -->
       <color></color>                                         <!-- [#000000] (hex color code) -->
-      <alpha></alpha>                                         <!-- [15] (0 - 100) -->
+      <alpha>5</alpha>                                        <!-- [15] (0 - 100) -->
       <dashed></dashed>                                       <!-- [false] (true / false) -->
       <dash_length></dash_length>                             <!-- [5] (Number) -->
       <approx_count></approx_count>                           <!-- [10] (Number) approximate number of gridlines -->
+      <fill_color></fill_color>                               <!-- [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) -->
+      <fill_alpha></fill_alpha>                               <!-- [0] (0 - 100) opacity of fill -->      
     </x>
-    <y>                                                       <!-- y axis grid -->      
+    <y>                                                       <!-- y axis grid -->    
       <color></color>                                         <!-- [#000000] (hex color code) -->
-      <alpha></alpha>                                         <!-- [15] (0 - 100) -->
+      <enabled></enabled>                                     <!-- [true] (true / false) -->
+      <alpha>5</alpha>                                        <!-- [15] (0 - 100) -->
       <dashed></dashed>                                       <!-- [false] (true / false) -->
       <dash_length></dash_length>                             <!-- [5] (Number) -->
-      <approx_count></approx_count>                           <!-- [10] (Number) approximate number of gridlines -->      
+      <approx_count></approx_count>                           <!-- [10] (Number) approximate number of gridlines -->
+      <fill_color>000000</fill_color>                         <!-- [#FFFFFF] (hex color code) every second area between gridlines will be filled with this color (you will need to set fill_alpha > 0) -->
+      <fill_alpha>5</fill_alpha>                              <!-- [0] (0 - 100) opacity of fill -->            
     </y>
   </grid>
   
@@ -142,15 +149,66 @@
     <text_color></text_color>                                 <!-- [#FFFFFF] (hex color code) -->
     <text_size></text_size>                                   <!-- [text_size] (Number) -->
     <max_width></max_width>                                   <!-- [220] (Number) -->
+    <corner_radius></corner_radius>                           <!-- [0] (Number) Corner radius of a balloon. If you set it > 0, the balloon will not display arrow -->
+    <border_width></border_width>                             <!-- [0] (Number) -->
+    <border_alpha></border_alpha>                             <!-- [balloon.alpha] (Number) -->
+    <border_color></border_color>                             <!-- [balloon.color] (hex color code) -->    
   </balloon>
-    
+  
+  <bullets>
+    <hover_brightness>20</hover_brightness>                   <!-- [0] (from -255 to 255) the bullet may darken/lighten when the use rolls over it. The intensity may be set here -->
+    <grow_time>2</grow_time>                                  <!-- [0] (Number) the time of animation of the bullets, in seconds. Leave 0 to appear instantly -->
+    <sequenced_grow>true</sequenced_grow>                     <!-- [false] (true / false) whether to animate all bullets at the same time or one after another -->  
+    <grow_effect></grow_effect>                               <!-- [elastic] (elastic, regular, strong) -->   
+  </bullets>
+  
+  <scroller>
+    <enabled></enabled>                                       <!-- [true] (true / false) whether to show scroller when chart is zoomed or not -->
+    <color></color>                                           <!-- [#DADADA] (hex color code) scrollbar color. Separate color codes with comas for gradient -->
+    <alpha></alpha>                                           <!-- [100] (Number) scrollbar alpha -->
+    <bg_color></bg_color>                                     <!-- [#F0F0F0] (hex color code) scroller background color. Separate color codes with comas for gradient -->
+    <bg_alpha></bg_alpha>                                     <!-- [100] (Number) scroller background alpha -->
+    <height></height>                                         <!-- [10] (Number) scroller height -->    
+  </scroller>  
+  
+  <zoom>
+    <enabled></enabled>                                       <!-- [true] (true / false) whether the user can select the area to zoom-in -->
+    <max_factor></max_factor>                                 <!-- [20] (Number) The maximum zoom level -->
+    <border_color></border_color>                             <!-- [#BBBB00] color of a zoom box border -->
+    <border_alpha></border_alpha>                             <!-- [100] (Number) zoom box border opacity -->
+    <bg_color></bg_color>                                     <!-- [#BBBB00] zoom box background color -->
+    <bg_alpha></bg_alpha>                                     <!-- [25] zoom box background opacity -->
+    <target></target>                                         <!-- [true] whether to show target when the mouse is over plot area or not -->
+  </zoom>
+
+  <help>                                                      <!-- HELP button and balloon -->  
+    <button>                                                  <!-- help button is only visible if balloon text is defined -->
+      <x></x>                                                 <!-- [] (Number / Number% / !Number) x position of help button, if not defined, will be aligned to right of chart area -->
+      <y></y>                                                 <!-- [] (Number / Number% / !Number) y position of help button, if not defined, will be aligned to top of chart area -->
+      <color></color>                                         <!-- [#000000] (hex color code) background color -->
+      <alpha></alpha>                                         <!-- [100] (0 - 100) background alpha -->
+      <text_color></text_color>                               <!-- [#FFFFFF] (hex color code) button text color -->
+      <text_color_hover></text_color_hover>                   <!-- [#BBBB00](hex color code) button text roll over color -->    
+      <text_size></text_size>                                 <!-- [] (Number) button text size -->
+      <text></text>                                           <!-- [?] (text) -->                                 
+    </button>    
+    <balloon>                                                 <!-- help balloon -->
+      <color></color>                                         <!-- [#000000] (hex color code) background color -->
+      <alpha></alpha>                                         <!-- [100] (0 - 100) background alpha -->
+      <width></width>                                         <!-- [300] (Number) -->
+      <text_color></text_color>                               <!-- [#FFFFFF] (hex color code) button text color -->
+      <text_size></text_size>                                 <!-- [] (Number) button text size -->
+      <text><![CDATA[Select the area to enlarge]]></text>     <!-- [] (text) some html tags may be used (supports <b>, <i>, <u>, <font>, <br/>. Enter text between []: <![CDATA[your <b>bold</b> and <i>italic</i> text]]>-->
+    </balloon>    
+  </help> 
+  
   <legend>                                                    <!-- LEGEND -->
     <enabled>false</enabled>                                  <!-- [true] (true / false) -->
-    <x></x>                                                   <!-- [] (Number) if empty, will be equal to left margin -->
-    <y></y>                                                   <!-- [] (Number) if empty, will be below plot area -->
-    <width></width>                                           <!-- [] (Number) if empty, will be equal to plot area width -->
+    <x></x>                                                   <!-- [] (Number / Number% / !Number) if empty, will be equal to left margin -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) if empty, will be below plot area -->
+    <width></width>                                           <!-- [] (Number / Number%) if empty, will be equal to plot area width -->
     <max_columns></max_columns>                               <!-- [] (Number) the maximum number of columns in the legend -->
-    <color></color>                                           <!-- [#FFFFFF] (hex color code) background color -->
+    <color></color>                                           <!-- [#FFFFFF] (hex color code) background color. Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) background alpha -->
     <border_color></border_color>                             <!-- [#000000] (hex color code) border color -->
     <border_alpha></border_alpha>                             <!-- [0] (0 - 100) border alpha -->
@@ -159,6 +217,7 @@
     <spacing></spacing>                                       <!-- [10] (Number) vertical and horizontal gap between legend entries -->
     <margins></margins>                                       <!-- [0] (Number) legend margins (space between legend border and legend entries, recommended to use only if legend border is visible or background color is different from chart area background color) -->
     <reverse_order></reverse_order>                           <!-- [false] (true / false) whether to sort legend entries in a reverse order -->    
+    <align></align>                                           <!-- [left] (left / center / right) alignment of legend entries -->    
     <key>                                                     <!-- KEY (the color box near every legend entry) -->
       <size></size>                                           <!-- [16] (Number) key size-->
       <border_color></border_color>                           <!-- [] (hex color code) leave empty if you don't want to have border -->
@@ -168,8 +227,8 @@
   <export_as_image>                                           <!-- export_as_image feature works only on a web server -->
     <file></file>                                             <!-- [] (filename) if you set filename here, context menu (then user right clicks on flash movie) "Export as image" will appear. This will allow user to export chart as an image. Collected image data will be posted to this file name (use amxy/export.php or amxy/export.aspx) -->
     <target></target>                                         <!-- [] (_blank, _top ...) target of a window in which export file must be called -->
-    <x></x>                                                   <!-- [0] (Number) x position of "Collecting data" text -->
-    <y></y>                                                   <!-- [] (Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie -->
+    <x></x>                                                   <!-- [0] (Number / Number% / !Number) x position of "Collecting data" text -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie -->
     <color></color>                                           <!-- [#BBBB00] (hex color code) background color of "Collecting data" text -->
     <alpha></alpha>                                           <!-- [0] (0 - 100) background alpha -->
     <text_color></text_color>                                 <!-- [text_color] (hex color code) -->
@@ -178,9 +237,9 @@
   
   <error_messages>                                            <!-- "error_messages" settings will be applied for all error messages except the one which is showed if settings file wasn't found -->
     <enabled></enabled>                                       <!-- [true] (true / false) -->
-    <x></x>                                                   <!-- [] (Number) x position of error message. If not set, will be aligned to the center -->
-    <y></y>                                                   <!-- [] (Number) y position of error message. If not set, will be aligned to the center -->
-    <color></color>                                           <!-- [#BBBB00] (hex color code) background color of error message -->
+    <x></x>                                                   <!-- [] (Number / Number% / !Number) x position of error message. If not set, will be aligned to the center -->
+    <y></y>                                                   <!-- [] (Number / Number% / !Number) y position of error message. If not set, will be aligned to the center -->
+    <color></color>                                           <!-- [#BBBB00] (hex color code) background color of error message. Separate color codes with comas for gradient -->
     <alpha></alpha>                                           <!-- [100] (0 - 100) background alpha -->
     <text_color></text_color>                                 <!-- [#FFFFFF] (hex color code) -->
     <text_size></text_size>                                   <!-- [text_size] (Number) -->
@@ -209,15 +268,29 @@
       <month12>Dec</month12>
     </months>    
   </strings>  
+
+  <context_menu>                                              <!-- context menu allows you to controll right-click menu items. You can add custom menu items to create custom controls -->                                                              
+                                                              <!-- "function_name" specifies JavaScript function which will be called when user clicks on this menu. You can pass variables, for example: function_name="alert('something')" -->
+                                                              <!-- "title" sets menu item text. Do not use for title: Show all, Zoom in, Zoom out, Print, Settings... -->
+                                                              <!-- you can have any number of custom menus. Uncomment the line below to enable this menu and add apropriate JS function to your html file. -->
+     
+     <!-- <menu function_name="printChart" title="Print chart"></menu> -->
+     
+     <default_items>
+       <zoom>false</zoom>                                     <!-- [true] (true / false) to show or not flash players zoom menu -->
+       <print>false</print>                                   <!-- [true] (true / false) to show or not flash players print menu -->
+     </default_items>
+  </context_menu>
+
   
   <labels>                                                    <!-- LABELS -->
                                                               <!-- you can add as many labels as you want -->
                                                               <!-- labels can also be added in data xml file, using exactly the same structure like it is here -->
-    <label>
-      <x>10</x>                                               <!-- [0] (Number) -->
-      <y>20</y>                                               <!-- [0] (Number) -->
+    <label lid="0">
+      <x>10</x>                                               <!-- [0] (Number / Number% / !Number) -->
+      <y>20</y>                                               <!-- [0] (Number / Number% / !Number) -->
       <rotate>false</rotate>                                  <!-- [false] (true, false) -->
-      <width></width>                                         <!-- [] (Number) if empty, will stretch from left to right untill label fits -->
+      <width></width>                                         <!-- [] (Number / Number%) if empty, will stretch from left to right untill label fits -->
       <align>center</align>                                   <!-- [left] (left / center / right) -->  
       <text_color></text_color>                               <!-- [text_color] (hex color code) button text color -->
       <text_size></text_size>                                 <!-- [text_size](Number) button text size -->
@@ -246,11 +319,17 @@
 
       <bullet_max_size></bullet_max_size>                     <!-- [50] maximum size of a bullet (balloon) The bullet with the highest value will be equal to this size -->
       <bullet_min_size></bullet_min_size>                     <!-- [0] minimum size of a bullet (balloon) -->
-      <bullet>round</bullet>                                  <!-- [] (square, round, square_outlined, round_outlined, filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color -->           
+      <bullet>bubble</bullet>                                 <!-- [] (square, round, square_outlined, round_outlined,  bubble, square_outline, round_outline, x. triangle_up, triangle_down, romb filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color -->           
       <bullet_size></bullet_size>                             <!-- [] (Number) bullet size. This param is only used if your values are not set in data file -->
       <bullet_color></bullet_color>                           <!-- [] (hex color code) bullet color. If not defined, graph color is used -->
       <bullet_alpha></bullet_alpha>                           <!-- [100] (Number) -->
       <visible_in_legend></visible_in_legend>                 <!-- [true] (true / false) whether to show legend entry for this graph or not -->
     </graph>
-  </graphs>          
+  </graphs>
+  
+	<!-- DATA can also be set in settings file. Just place data in CSV or XML format between <data></data> -->
+	
+	<!--<data>
+	</data> -->            
+	
 </settings>

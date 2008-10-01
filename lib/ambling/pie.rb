@@ -4,12 +4,12 @@ module Ambling
   class Pie
     
     #
-    # the top left corner has coordinates x = 0, y = 0                                                                
+    # "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom 
     #
     class Settings      
       include Base
       
-      VALUES = [:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:reload_data_interval,:preloader_on_reload,:redraw,:add_time_stamp,:precision,:exclude_invisible,:pie,:animation,:data_labels,:group,:background,:balloon,:legend,:export_as_image,:error_messages,:strings,:labels]
+      VALUES = [:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:reload_data_interval,:preloader_on_reload,:redraw,:add_time_stamp,:precision,:exclude_invisible,:pie,:animation,:data_labels,:group,:background,:balloon,:legend,:export_as_image,:error_messages,:strings,:context_menu,:labels]
       #
       #  [xml] (xml / csv) 
       #
@@ -46,7 +46,7 @@ module Ambling
       attr_accessor :decimals_separator
       
       #
-      #  [ ] (string) thousand separator 
+      #  [ ] (string) thousand separator. use "none" if you don't want to separate 
       #
       attr_accessor :thousands_separator
       
@@ -136,6 +136,11 @@ module Ambling
       attr_accessor :strings
       
       #
+      #  <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      attr_accessor :context_menu
+      
+      #
       #  labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       attr_accessor :labels
@@ -147,24 +152,24 @@ module Ambling
       class Pie  
         include Base
         
-        VALUES = [:x,:y,:radius,:inner_radius,:height,:angle,:outline_color,:outline_alpha,:base_color,:brightness_step,:colors,:link_target,:alpha]
+        VALUES = [:x,:y,:radius,:inner_radius,:height,:angle,:start_angle,:outline_color,:outline_alpha,:base_color,:brightness_step,:colors,:link_target,:alpha,:hover_brightness,:gradient,:gradient_ratio]
         #
-        #  [](Number) If left empty, will be positioned in the center 
+        #  [50%](Number / Number% / !Number) 
         #
         attr_accessor :x
         
         #
-        #  [](Number) If left empty, will be positioned in the center - 20px 
+        #  [45%](Number / Number% / !Number) 
         #
         attr_accessor :y
         
         #
-        #  [] (Number) If left empty, will be 25% of your chart smaller side 
+        #  [25%] (Number / Number%) 
         #
         attr_accessor :radius
         
         #
-        #  [0] (Number) the radius of the hole (if you want to have donut, use > 0) 
+        #  [0] (Number / Number%) the radius of the hole (if you want to have donut, use > 0) 
         #
         attr_accessor :inner_radius
         
@@ -177,6 +182,11 @@ module Ambling
         #  [0] (0 - 90) lean angle (for 3D effect) 
         #
         attr_accessor :angle
+        
+        #
+        #  [90] (0-360) angle of a first slice. This will work properly only if <pie><height> is set to 0. If height is > 0, then there can be two angles only: 90 and 270 
+        #
+        attr_accessor :start_angle
         
         #
         #  [#FFFFFF] (hex color code) 
@@ -199,7 +209,7 @@ module Ambling
         attr_accessor :brightness_step
         
         #
-        #  [0xFF0F00,0xFF6600,0xFF9E01,0xFCD202,0xF8FF01,0xB0DE09,0x04D215,0x0D8ECF,0x0D52D1,0x2A0CD0,0x8A0CCF,0xCD0D74] (hex color codes separated by comas) 
+        #  [#FF0F00,#FF6600,#FF9E01,#FCD202,#F8FF01,#B0DE09,#04D215,#0D8ECF,#0D52D1,#2A0CD0,#8A0CCF,#CD0D74,#754DEB,#DDDDDD,#999999,#333333,#990000] (hex color codes separated by comas) 
         #
         attr_accessor :colors
         
@@ -212,6 +222,21 @@ module Ambling
         #  [100] (0 - 100) slices alpha. You can set individual alphas for every slice in data file. If you set alpha to 0 the slice will be inactive for mouse events and data labels will be hidden. This allows you to make not full pies and donuts. 
         #
         attr_accessor :alpha
+        
+        #
+        #  [0] (from -255 to 255) The pie slice may darken/lighten when the use rolls over it. The intensity may be set here 
+        #
+        attr_accessor :hover_brightness
+        
+        #
+        #  [] (linear/radial) Allows slices to be filled with gradient colors 
+        #
+        attr_accessor :gradient
+        
+        #
+        #  [0,-40] (Numbers from (-255 to 255) separated by commas) Controls the gradient ratio 
+        #
+        attr_accessor :gradient_ratio
       end
       #
       #
@@ -219,7 +244,7 @@ module Ambling
       class Animation  
         include Base
         
-        VALUES = [:start_time,:start_effect,:start_radius,:start_alpha,:pull_out_on_click,:pull_out_time,:pull_out_effect,:pull_out_radius,:pull_out_only_one]
+        VALUES = [:start_time,:start_effect,:start_radius,:start_alpha,:sequenced,:pull_out_on_click,:pull_out_time,:pull_out_effect,:pull_out_radius,:pull_out_only_one]
         #
         #  [0] (Number) fly-in time in seconds. Leave 0 to appear instantly 
         #
@@ -231,7 +256,7 @@ module Ambling
         attr_accessor :start_effect
         
         #
-        #  [] (Number) if left empty, will use pie.radius * 5 
+        #  [500%] (Number / Number%) 
         #
         attr_accessor :start_radius
         
@@ -239,6 +264,11 @@ module Ambling
         #  [0] (Number) 
         #
         attr_accessor :start_alpha
+        
+        #
+        #  [false] (true / false) Whether the slices should appear all together or one after another 
+        #
+        attr_accessor :sequenced
         
         #
         #  [true] (true / false) whether to pull out slices when user clicks on them (or on legend entry) 
@@ -256,7 +286,7 @@ module Ambling
         attr_accessor :pull_out_effect
         
         #
-        #  [] (Number) how far pie slices should be pulled-out then user clicks on them (if left empty, uses 20% of pie radius) 
+        #  [20%] (Number / Number%) how far pie slices should be pulled-out then user clicks on them 
         #
         attr_accessor :pull_out_radius
         
@@ -271,9 +301,9 @@ module Ambling
       class DataLabels  
         include Base
         
-        VALUES = [:radius,:text_color,:text_size,:max_width,:show,:show_lines,:line_color,:line_alpha,:hide_labels_percent]
+        VALUES = [:radius,:text_color,:text_size,:max_width,:show,:show_lines,:line_color,:line_alpha,:hide_labels_percent,:avoid_overlapping]
         #
-        #  [30] (Number) distance of the labels from the pie. Use negative value to place labels on the pie 
+        #  [20%] (Number / Number%) distance of the labels from the pie. Use negative value to place labels on the pie 
         #
         attr_accessor :radius
         
@@ -293,7 +323,7 @@ module Ambling
         attr_accessor :max_width
         
         #
-        #  [] ({value} {title} {percents}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. 
+        #  [] ({value} {title} {percents} {description}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. 
         #
         attr_accessor :show
         
@@ -316,6 +346,11 @@ module Ambling
         #  [0] data labels of slices less then skip_labels_percent% will be hidden (to avoid label overlapping if there are many small pie slices)
         #
         attr_accessor :hide_labels_percent
+        
+        #
+        #  [true] (true / false) Whether to change data labels positions so that they wouldn't overlap or not 
+        #
+        attr_accessor :avoid_overlapping
       end
       #
       #
@@ -362,7 +397,7 @@ module Ambling
         
         VALUES = [:color,:alpha,:border_color,:border_alpha,:file]
         #
-        #  [#FFFFFF] (hex color code) 
+        #  [#FFFFFF] (hex color code) Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -392,7 +427,7 @@ module Ambling
       class Balloon  
         include Base
         
-        VALUES = [:enabled,:color,:alpha,:text_color,:text_size,:show]
+        VALUES = [:enabled,:color,:alpha,:text_color,:text_size,:show,:max_width,:corner_radius,:border_width,:border_alpha,:border_color]
         #
         #  [true] (true / false) 
         #
@@ -409,7 +444,7 @@ module Ambling
         attr_accessor :alpha
         
         #
-        #  [0xFFFFFF] (hex color code) 
+        #  [#FFFFFF] (hex color code) 
         #
         attr_accessor :text_color
         
@@ -419,9 +454,34 @@ module Ambling
         attr_accessor :text_size
         
         #
-        #  [] ({value} {title} {percents}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. 
+        #  [{title}: {percents}% ({value}) <br>{description}] ({value} {title} {percents} {description}) You can format any data label: {value} - will be replaced with value and so on. You can add your own text or html code too. 
         #
         attr_accessor :show
+        
+        #
+        #  [220] (Number) The maximum width of a balloon 
+        #
+        attr_accessor :max_width
+        
+        #
+        #  [0] (Number) Corner radius of a balloon. If you set it > 0, the balloon will not display arrow 
+        #
+        attr_accessor :corner_radius
+        
+        #
+        #  [0] (Number) 
+        #
+        attr_accessor :border_width
+        
+        #
+        #  [balloon.alpha] (Number) 
+        #
+        attr_accessor :border_alpha
+        
+        #
+        #  [balloon.color] (hex color code) 
+        #
+        attr_accessor :border_color
       end
       #
       # LEGEND 
@@ -429,29 +489,29 @@ module Ambling
       class Legend  
         include Base
         
-        VALUES = [:enabled,:x,:y,:width,:color,:max_columns,:alpha,:border_color,:border_alpha,:text_color,:text_size,:spacing,:margins,:reverse_order,:key,:values]
+        VALUES = [:enabled,:x,:y,:width,:color,:max_columns,:alpha,:border_color,:border_alpha,:text_color,:text_size,:spacing,:margins,:reverse_order,:align,:key,:values]
         #
         #  [true] (true / false) 
         #
         attr_accessor :enabled
         
         #
-        #  [40] (Number) 
+        #  [5%] (Number / Number% / !Number) 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) if empty, will be below the pie 
+        #  [] (Number / Number% / !Number) if empty, will be placed below the pie 
         #
         attr_accessor :y
         
         #
-        #  [] (Number) if empty, will be equal to flash width-80 
+        #  [90%] (Number / Number%) 
         #
         attr_accessor :width
         
         #
-        #  [#FFFFFF] (hex color code) background color 
+        #  [#FFFFFF] (hex color code) background color. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -499,6 +559,11 @@ module Ambling
         #  [false] (true / false) whether to sort legend entries in a reverse order 
         #
         attr_accessor :reverse_order
+        
+        #
+        #  [left] (left / center / right) alignment of legend entries 
+        #
+        attr_accessor :align
         
         #
         #  KEY (the color box near every legend entry) 
@@ -569,12 +634,12 @@ module Ambling
         attr_accessor :target
         
         #
-        #  [0] (Number) x position of "Collecting data" text 
+        #  [0] (Number / Number% / !Number) x position of "Collecting data" text 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
+        #  [] (Number / Number% / !Number) y position of "Collecting data" text. If not set, will be aligned to the bottom of flash movie 
         #
         attr_accessor :y
         
@@ -611,17 +676,17 @@ module Ambling
         attr_accessor :enabled
         
         #
-        #  [] (Number) x position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) x position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :x
         
         #
-        #  [] (Number) y position of error message. If not set, will be aligned to the center 
+        #  [] (Number / Number% / !Number) y position of error message. If not set, will be aligned to the center 
         #
         attr_accessor :y
         
         #
-        #  [#BBBB00] (hex color code) background color of error message 
+        #  [#BBBB00] (hex color code) background color of error message. Separate color codes with comas for gradient 
         #
         attr_accessor :color
         
@@ -663,6 +728,37 @@ module Ambling
         attr_accessor :collecting_data
       end
       #
+      # <menu function_name="printChart" title="Print chart"></menu> 
+      #
+      class ContextMenu  
+        include Base
+        
+        VALUES = [:default_items]
+        #
+        # 
+        #
+        attr_accessor :default_items
+        
+        
+        #
+        #
+        #
+        class DefaultItems  
+          include Base
+          
+          VALUES = [:zoom,:print]
+          #
+          #  [true] (true / false) to show or not flash players zoom menu 
+          #
+          attr_accessor :zoom
+          
+          #
+          #  [true] (true / false) to show or not flash players print menu 
+          #
+          attr_accessor :print
+        end
+      end
+      #
       # labels can also be added in data xml file, using exactly the same structure like it is here 
       #
       class Labels  
@@ -682,13 +778,14 @@ module Ambling
           include Base
           
           VALUES = [:x,:y,:rotate,:width,:align,:text_color,:text_size,:text]
+          ATTRIBUTES = [:lid]
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :x
           
           #
-          #  [0] (Number) 
+          #  [0] (Number / Number% / !Number) 
           #
           attr_accessor :y
           
@@ -698,7 +795,7 @@ module Ambling
           attr_accessor :rotate
           
           #
-          #  [] (Number) if empty, will stretch from left to right untill label fits 
+          #  [] (Number / Number%) if empty, will stretch from left to right untill label fits 
           #
           attr_accessor :width
           
@@ -721,6 +818,11 @@ module Ambling
           #  [] (text) html tags may be used (supports <b>, <i>, <u>, <font>, <a href="">, <br/>. Enter text between []: <![CDATA[your <b>bold</b> and <i>italic</i> text]]>
           #
           attr_accessor :text
+          
+          #
+          # xml attribute
+          #
+          attr_accessor :lid
         end
       end    
     end
