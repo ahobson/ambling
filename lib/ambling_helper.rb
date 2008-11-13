@@ -21,6 +21,7 @@ module Ambling #:nodoc
     # * <tt>:id</tt> - The id of the DOM element that will be replaced
     # * <tt>:settings_file</tt> - The path to the xml settings file (could be url)
     # * <tt>:chart_settings</tt> - Inline xml settings.  Use one of settings_file and chart_settings
+    # * <tt>:swf_params</tt> - Hash of params to be set on SWFObject (with so.addParam()).
     # * <tt>:additional_chart_settings</tt> - More inline xml settings.
     # * <tt>:data_file</tt> - The path to the xml data file (could be url)
     # * <tt>:chart_data</tt> - Inline xml data.  Use one of data_file and chart_data
@@ -48,6 +49,9 @@ module Ambling #:nodoc
       script << add_variable(options, :chart_data)
       
       script << add_variable(options, :preloader_color)
+      
+      script << add_swf_params(options, :swf_params, true)
+      
       script << "so.write('#{options[:id]}');"
       html = yield
       content_tag('div', html, :id => options[:id]) + javascript_tag(script)
@@ -61,6 +65,18 @@ module Ambling #:nodoc
       stresc = options[key].gsub('"', "%22")
       val = escape ? "escape('#{stresc}')" : "'#{stresc}'"
       "so.addVariable('#{key}', #{val});"
+    end
+
+    # Add parameters in params[key] to SWFObject
+    def add_swf_params(options, key, escape=false)
+      return "" unless options[key]
+      res = ""
+      options[key].each_pair do |key, val|
+        stresc = val.gsub('"', "%22")
+        val = escape ? "escape('#{stresc}')" : "'#{stresc}'"
+        res << "so.addParam('#{key}', #{val});"
+      end
+      res
     end
   end
 end
