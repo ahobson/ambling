@@ -36,7 +36,7 @@ module Ambling #:nodoc
                   :id                 => "ambling_chart"
                 }.merge!(chart_options)
       script = "var so = new SWFObject('#{options[:swf_path]}/am#{chart_type}.swf', " +
-                                      "'#{options[:id]}', '#{options[:width]}', '#{options[:height]}', " +
+                                      "'swf_#{options[:id]}', '#{options[:width]}', '#{options[:height]}', " +
                                       "'#{options[:flash_version]}', '#{options[:background_color]}');"
       script << "so.addVariable('path', '#{options[:swf_path]}/');"
       script << "so.useExpressInstall('#{options[:swf_path]}/expressinstall.swf');" if options[:express_install]
