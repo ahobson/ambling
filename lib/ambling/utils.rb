@@ -21,13 +21,17 @@ module Ambling #:nodoc
       
       # Generate the class code
       def to_class_s(indent = 0)
-        cdef = "\n#\n##{@comment}\n#\nclass #{key.camelize}\n"
+        cdef = "\n#\n"
+        cdef << @comment.split(/\n/).map {|l| "# #{l}"}.join("\n")
+        cdef << "#\nclass #{key.camelize}\n"
         cbody = "\ninclude Base\n\n"
         cbody << "VALUES = [#{@values.keys.collect {|k| ':' + k}.join(',')}]\n"
         cbody << "ATTRIBUTES = [#{@attributes.collect {|k| ':' + k}.join(',')}]\n" if !@attributes.empty?
         subclasses = []
         @values.each do |k,v|
-          cbody << "#\n# #{v.comment}\n#\nattr_accessor :#{k}\n\n"
+          cbody << "#\n"
+          cbody << v.comment.split(/\n/).map {|l| "# #{l}"}.join("\n")
+          cbody << "#\nattr_accessor :#{k}\n\n"
           subclasses << v if not v.values.empty?
         end
         @attributes.each do |a|
