@@ -46,8 +46,8 @@ module Ambling #:nodoc
     #
     # Return an xml representation of these settings
     #
-    def to_xml
-      builder = Builder::XmlMarkup.new
+    def to_xml(builder = nil)
+      builder ||= Builder::XmlMarkup.new
       tag = self.class.to_s.split("::").last.downcase
       attr_list = self.class.send(:const_get, :ATTRIBUTES) rescue []
       attrs = attr_list.inject({}) do |h,a|
