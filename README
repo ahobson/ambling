@@ -12,7 +12,8 @@
 #
 #
 # Amcharts uses swfobject.js, so put that in public/javascripts and include it
-# in your layout.
+# in your layout.  It does not work with swfobject version 2.x so you'll need
+# to find swfobject 1.x
 # 
 # Ambling uses expressinstall.swf by default, so put that in public/amcharts.
 #

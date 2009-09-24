@@ -22,7 +22,7 @@ module Ambling #:nodoc
       # Generate the class code
       def to_class_s(indent = 0)
         cdef = "\n#\n"
-        cdef << @comment.split(/\n/).map {|l| "# #{l}"}.join("\n")
+        cdef << @comment.split(/\n/).map {|l| "# #{l.strip}"}.join("\n") << "\n"
         cdef << "#\nclass #{key.camelize}\n"
         cbody = "\ninclude Base\n\n"
         cbody << "VALUES = [#{@values.keys.collect {|k| ':' + k}.join(',')}]\n"
@@ -30,7 +30,7 @@ module Ambling #:nodoc
         subclasses = []
         @values.each do |k,v|
           cbody << "#\n"
-          cbody << v.comment.split(/\n/).map {|l| "# #{l}"}.join("\n")
+          cbody << v.comment.split(/\n/).map {|l| "# #{l}"}.join("\n") << "\n"
           cbody << "#\nattr_accessor :#{k}\n\n"
           subclasses << v if not v.values.empty?
         end
@@ -110,4 +110,12 @@ module Ambling #:nodoc
       end
     end
   end
+end
+
+if __FILE__ == $0
+  if 2 != ARGV.size
+    STDERR.puts "Usage: #{$0} chart_type settings.xml"
+    exit(2)
+  end
+  puts Ambling::Utils::SettingsGenerator.new.generate(ARGV.first, File.read(ARGV.last))
 end

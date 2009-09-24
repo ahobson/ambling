@@ -4,12 +4,12 @@ module Ambling
   class Line
     
     #
-    # "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom 
+    # "!" before x or y position (for example: <x>!20</x>) means that the coordinate will be calculated from the right side or the bottom
     #
     class Settings      
       include Base
       
-      VALUES = [:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:connect,:hide_bullets_count,:link_target,:start_on_axis,:colors,:rescale_on_hide,:background,:plot_area,:scroller,:grid,:values,:axes,:indicator,:balloon,:legend,:vertical_lines,:zoom_out_button,:help,:export_as_image,:error_messages,:strings,:context_menu,:labels,:graphs,:guides]
+      VALUES = [:data_type,:csv_separator,:skip_rows,:font,:text_size,:text_color,:decimals_separator,:thousands_separator,:digits_after_decimal,:scientific_min,:scientific_max,:redraw,:reload_data_interval,:preloader_on_reload,:add_time_stamp,:precision,:connect,:hide_bullets_count,:link_target,:start_on_axis,:colors,:rescale_on_hide,:js_enabled,:background,:plot_area,:scroller,:grid,:values,:axes,:indicator,:balloon,:legend,:vertical_lines,:zoom_out_button,:help,:export_as_image,:error_messages,:strings,:context_menu,:labels,:graphs,:guides]
       #
       #  [xml] (xml / csv) 
       #
@@ -56,7 +56,17 @@ module Ambling
       attr_accessor :digits_after_decimal
       
       #
-      #  [false] (true / false) if your chart's width or height is set in percents, and redraw is set to true, the chart will be redrawn then screen size changes  Legend, buttons labels will not be repositioned if you set your x and y values for these objects 
+      #  [0.000001] If absolute value of your number is equal or less then scientific_min, this number will be formatted using scientific notation, for example: 0.0000023 -> 2.3e-6 
+      #
+      attr_accessor :scientific_min
+      
+      #
+      #  [1000000000000000] If absolute value of your number is equal or bigger then scientific_max, this number will be formatted using scientific notation, for example: 15000000000000000 -> 1.5e16 
+      #
+      attr_accessor :scientific_max
+      
+      #
+      #  Legend, buttons labels will not be repositioned if you set your x and y values for these objects 
       #
       attr_accessor :redraw
       
@@ -111,6 +121,11 @@ module Ambling
       attr_accessor :rescale_on_hide
       
       #
+      #  [true] (true / false) In case you don't use any flash - JavaScript communication, you shuold set this setting to false - this will save some CPU and will disable the security warning message which appears when opening the chart from hard drive. 
+      #
+      attr_accessor :js_enabled
+      
+      #
       #  BACKGROUND 
       #
       attr_accessor :background
@@ -121,7 +136,7 @@ module Ambling
       attr_accessor :plot_area
       
       #
-      # 
+      
       #
       attr_accessor :scroller
       
@@ -161,7 +176,7 @@ module Ambling
       attr_accessor :vertical_lines
       
       #
-      # 
+      
       #
       attr_accessor :zoom_out_button
       
@@ -181,7 +196,7 @@ module Ambling
       attr_accessor :error_messages
       
       #
-      # 
+      
       #
       attr_accessor :strings
       
@@ -207,7 +222,7 @@ module Ambling
       
       
       #
-      # BACKGROUND 
+      # BACKGROUND
       #
       class Background  
         include Base
@@ -234,12 +249,12 @@ module Ambling
         attr_accessor :border_alpha
         
         #
-        #  [] (filename) swf or jpg file of a background. Do not use progressive jpg file, it will be not visible with flash player 7  The chart will look for this file in "path" folder ("path" is set in HTML) 
+        #  The chart will look for this file in "path" folder ("path" is set in HTML) 
         #
         attr_accessor :file
       end
       #
-      # PLOT AREA (the area between axes) 
+      # PLOT AREA (the area between axes)
       #
       class PlotArea  
         include Base
@@ -272,35 +287,35 @@ module Ambling
         
         
         #
-        # plot area margins 
+        # plot area margins
         #
         class Margins  
           include Base
           
           VALUES = [:left,:top,:right,:bottom]
           #
-          #  [60](Number) 
+          #  [60](Number / Number%) 
           #
           attr_accessor :left
           
           #
-          #  [60](Number) 
+          #  [60](Number / Number%) 
           #
           attr_accessor :top
           
           #
-          #  [60](Number) 
+          #  [60](Number / Number%) 
           #
           attr_accessor :right
           
           #
-          #  [80](Number) 
+          #  [80](Number / Number%) 
           #
           attr_accessor :bottom
         end
       end
       #
-      #
+      
       #
       class Scroller  
         include Base
@@ -342,7 +357,7 @@ module Ambling
         attr_accessor :height
       end
       #
-      # GRID 
+      # GRID
       #
       class Grid  
         include Base
@@ -365,7 +380,7 @@ module Ambling
         
         
         #
-        # vertical grid 
+        # vertical grid
         #
         class X  
           include Base
@@ -402,7 +417,7 @@ module Ambling
           attr_accessor :approx_count
         end
         #
-        # horizontal grid, Y left axis. Visible only if there is at least one graph assigned to left axis 
+        # horizontal grid, Y left axis. Visible only if there is at least one graph assigned to left axis
         #
         class YLeft  
           include Base
@@ -449,7 +464,7 @@ module Ambling
           attr_accessor :fill_alpha
         end
         #
-        # horizontal grid, Y right axis. Visible only if there is at least one graph assigned to right axis 
+        # horizontal grid, Y right axis. Visible only if there is at least one graph assigned to right axis
         #
         class YRight  
           include Base
@@ -497,7 +512,7 @@ module Ambling
         end
       end
       #
-      # VALUES 
+      # VALUES
       #
       class Values  
         include Base
@@ -520,7 +535,7 @@ module Ambling
         
         
         #
-        # x axis 
+        # x axis
         #
         class X  
           include Base
@@ -567,12 +582,12 @@ module Ambling
           attr_accessor :inside
         end
         #
-        # y left axis 
+        # y left axis
         #
         class YLeft  
           include Base
           
-          VALUES = [:enabled,:reverse,:rotate,:min,:max,:strict_min_max,:frequency,:skip_first,:skip_last,:color,:text_size,:unit,:unit_position,:integers_only,:inside]
+          VALUES = [:enabled,:reverse,:rotate,:min,:max,:strict_min_max,:frequency,:skip_first,:skip_last,:color,:text_size,:unit,:unit_position,:integers_only,:inside,:duration]
           #
           #  [true] (true / false) 
           #
@@ -647,14 +662,19 @@ module Ambling
           #  [false] (true / false) if set to true, axis values will be displayed inside plot area. This setting will not work for values rotated by 1-89 degrees (0 and 90 only) 
           #
           attr_accessor :inside
+          
+          #
+          #  [] (ss/mm/hh/DD) In case you want your axis to display formatted durations instead of numbers, you have to set the unit of the duration in your data file. For example, if your values in data file represents seconds, set "ss" here.
+          #
+          attr_accessor :duration
         end
         #
-        # y right axis 
+        # y right axis
         #
         class YRight  
           include Base
           
-          VALUES = [:enabled,:reverse,:rotate,:min,:max,:strict_min_max,:frequency,:skip_first,:skip_last,:color,:text_size,:unit,:unit_position,:integers_only,:inside]
+          VALUES = [:enabled,:reverse,:rotate,:min,:max,:strict_min_max,:frequency,:skip_first,:skip_last,:color,:text_size,:unit,:unit_position,:integers_only,:inside,:duration]
           #
           #  [true] (true / false) 
           #
@@ -729,10 +749,15 @@ module Ambling
           #  [false] (true / false) if set to true, axis values will be displayed inside plot area. This setting will not work for values rotated by 1-89 degrees (0 and 90 only) 
           #
           attr_accessor :inside
+          
+          #
+          #  [] (ss/mm/hh/DD) In case you want your axis to display formatted durations instead of numbers, you have to set the unit of the duration in your data file. For example, if your values in data file represents seconds, set "ss" here.
+          #
+          attr_accessor :duration
         end
       end
       #
-      # axes 
+      # axes
       #
       class Axes  
         include Base
@@ -755,7 +780,7 @@ module Ambling
         
         
         #
-        # X axis 
+        # X axis
         #
         class X  
           include Base
@@ -782,7 +807,7 @@ module Ambling
           attr_accessor :tick_length
         end
         #
-        # Y left axis, visible only if at least one graph is assigned to this axis 
+        # Y left axis, visible only if at least one graph is assigned to this axis
         #
         class YLeft  
           include Base
@@ -819,7 +844,7 @@ module Ambling
           attr_accessor :logarithmic
         end
         #
-        # Y right axis, visible only if at least one graph is assigned to this axis 
+        # Y right axis, visible only if at least one graph is assigned to this axis
         #
         class YRight  
           include Base
@@ -857,7 +882,7 @@ module Ambling
         end
       end
       #
-      # INDICATOR 
+      # INDICATOR
       #
       class Indicator  
         include Base
@@ -904,7 +929,7 @@ module Ambling
         attr_accessor :x_balloon_text_color
       end
       #
-      # BALLOON 
+      # BALLOON
       #
       class Balloon  
         include Base
@@ -971,7 +996,7 @@ module Ambling
         attr_accessor :border_color
       end
       #
-      # LEGEND 
+      # LEGEND
       #
       class Legend  
         include Base
@@ -1074,7 +1099,7 @@ module Ambling
         
         
         #
-        # KEY (the color box near every legend entry) 
+        # KEY (the color box near every legend entry)
         #
         class Key  
           include Base
@@ -1096,7 +1121,7 @@ module Ambling
           attr_accessor :key_mark_color
         end
         #
-        # VALUES 
+        # VALUES
         #
         class Values  
           include Base
@@ -1124,7 +1149,7 @@ module Ambling
         end
       end
       #
-      # line chart can also display vertical lines/columns (set <vertical_lines>true</vertical_lines> in graph settings for that). If you also set <line_alpha>0</line_alpha> your line chart will become column chart 
+      # line chart can also display vertical lines/columns (set <vertical_lines>true</vertical_lines> in graph settings for that). If you also set <line_alpha>0</line_alpha> your line chart will become column chart
       #
       class VerticalLines  
         include Base
@@ -1151,7 +1176,7 @@ module Ambling
         attr_accessor :mask
       end
       #
-      #
+      
       #
       class ZoomOutButton  
         include Base
@@ -1198,7 +1223,7 @@ module Ambling
         attr_accessor :text
       end
       #
-      # HELP button and balloon 
+      # HELP button and balloon
       #
       class Help  
         include Base
@@ -1216,7 +1241,7 @@ module Ambling
         
         
         #
-        # help button is only visible if balloon text is defined 
+        # help button is only visible if balloon text is defined
         #
         class Button  
           include Base
@@ -1263,7 +1288,7 @@ module Ambling
           attr_accessor :text
         end
         #
-        # help balloon 
+        # help balloon
         #
         class Balloon  
           include Base
@@ -1301,7 +1326,7 @@ module Ambling
         end
       end
       #
-      # export_as_image feature works only on a web server 
+      # export_as_image feature works only on a web server
       #
       class ExportAsImage  
         include Base
@@ -1348,7 +1373,7 @@ module Ambling
         attr_accessor :text_size
       end
       #
-      # "error_messages" settings will be applied for all error messages except the one which is showed if settings file wasn't found 
+      # "error_messages" settings will be applied for all error messages except the one which is showed if settings file wasn't found
       #
       class ErrorMessages  
         include Base
@@ -1390,12 +1415,12 @@ module Ambling
         attr_accessor :text_size
       end
       #
-      #
+      
       #
       class Strings  
         include Base
         
-        VALUES = [:no_data,:export_as_image,:error_in_data_file,:collecting_data,:wrong_zoom_value]
+        VALUES = [:no_data,:export_as_image,:error_in_data_file,:collecting_data,:wrong_zoom_value,:ss,:mm,:hh,:DD]
         #
         #  [No data for selected period] (text) if data for selected period is missing, this message will be displayed 
         #
@@ -1417,32 +1442,52 @@ module Ambling
         attr_accessor :collecting_data
         
         #
-        #  [Incorrect values] (text) this text is displayed if you set zoom through JavaScript and entered from or to value was not find between series 
+        #  the strings below are only important if you format your axis values as durations 
         #
         attr_accessor :wrong_zoom_value
+        
+        #
+        #  [] unit of seconds 
+        #
+        attr_accessor :ss
+        
+        #
+        #  [:] unit of minutes 
+        #
+        attr_accessor :mm
+        
+        #
+        #  [:] unit of hours 
+        #
+        attr_accessor :hh
+        
+        #
+        #  [d. ] unit of days 
+        #
+        attr_accessor :DD
       end
       #
-      # <menu function_name="printChart" title="Print chart"></menu> 
+      # <menu function_name="printChart" title="Print chart"></menu>
       #
       class ContextMenu  
         include Base
         
         VALUES = [:default_items]
         #
-        # 
+        
         #
         attr_accessor :default_items
         
         
         #
-        #
+        
         #
         class DefaultItems  
           include Base
           
           VALUES = [:zoom,:print]
           #
-          #  [true] (true / false) to show or not flash players zoom menu 
+          #  [false] (true / false) to show or not flash players zoom menu 
           #
           attr_accessor :zoom
           
@@ -1453,20 +1498,20 @@ module Ambling
         end
       end
       #
-      # labels can also be added in data xml file, using exactly the same structure like it is here 
+      # labels can also be added in data xml file, using exactly the same structure like it is here
       #
       class Labels  
         include Base
         
         VALUES = [:label]
         #
-        # 
+        
         #
         attr_accessor :label
         
         
         #
-        #
+        
         #
         class Label  
           include Base
@@ -1520,7 +1565,7 @@ module Ambling
         end
       end
       #
-      # if graph settings are defined both here and in data file, the ones from data file are used 
+      # if graph settings are defined both here and in data file, the ones from data file are used
       #
       class Graphs  
         include Base
@@ -1533,7 +1578,7 @@ module Ambling
         
         
         #
-        # if you are using XML data file, graph "gid" must match graph "gid" in data file 
+        # if you are using XML data file, graph "gid" must match graph "gid" in data file
         #
         class Graph  
           include Base
@@ -1596,12 +1641,12 @@ module Ambling
           attr_accessor :balloon_text_color
           
           #
-          #  [] (square, round, square_outlined, round_outlined, square_outline, round_outline, square_outline, round_outline, filename.swf) can be used predefined bullets or loaded custom bullets. Leave empty if you don't want to have bullets at all. Outlined bullets use plot area color for outline color  The chart will look for this file in "path" folder ("path" is set in HTML) 
+          #  The chart will look for this file in "path" folder ("path" is set in HTML) 
           #
           attr_accessor :bullet
           
           #
-          #  [6](Number) affects only predefined (square and round) bullets, does not change size of custom loaded bullets 
+          #  [8](Number) affects only predefined bullets, does not change size of custom loaded bullets 
           #
           attr_accessor :bullet_size
           
@@ -1667,7 +1712,7 @@ module Ambling
         end
       end
       #
-      # guides are straight lines drawn through all plot area at a give value. Can also be filled with color 
+      # guides are straight lines drawn through all plot area at a give value. Can also be filled with color
       #
       class Guides  
         include Base
@@ -1685,7 +1730,7 @@ module Ambling
         
         
         #
-        # there can be any number of quides. guides can also be set in data xml file, using the same syntax as here 
+        # there can be any number of quides. guides can also be set in data xml file, using the same syntax as here
         #
         class Guide  
           include Base
