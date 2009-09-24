@@ -11,8 +11,8 @@ module Ambling #:nodoc
         self.class.to_s.split("::").last.downcase
       end
       
-      def to_xml
-        builder = Builder::XmlMarkup.new
+      def to_xml(builder = nil)
+        builder ||= Builder::XmlMarkup.new
         builder.tag!(tag_name) { self.build_xml(builder) }
         builder.target!
       end
@@ -27,8 +27,8 @@ module Ambling #:nodoc
         @attributes = attributes
       end
       
-      def to_xml
-        builder = Builder::XmlMarkup.new
+      def to_xml(builder = nil)
+        builder ||= Builder::XmlMarkup.new
         build_xml(builder)
         builder.target!
       end

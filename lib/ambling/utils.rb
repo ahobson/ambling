@@ -48,10 +48,9 @@ module Ambling #:nodoc
         str.split(/\n/).collect {|s| spaces(n) + s}.join("\n")
       end
       
-      # I must be missing something, because it feels wrong that 
-      # there isn't an easier way to generate spaces
+      # Generate n spaces
       def spaces(n)
-        (0..n-1).inject("") {|w,n| w+= " "}
+        " " * n
       end
     end
     #
